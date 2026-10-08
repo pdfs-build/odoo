@@ -132,7 +132,7 @@ class IrActionsReport(models.Model):
         "dict the template expects. Available: record, env, user, company, datetime, "
         "dateutil, relativedelta, time, image(binary), html2plaintext(html), "
         "format_date(value), format_datetime(value), format_amount(amount, currency), "
-        "tax_groups(record).",
+        "tax_groups(record), weight_uom_name.",
     )
     pdfs_build_version = fields.Char(
         string="Template Version",
@@ -350,6 +350,12 @@ class IrActionsReport(models.Model):
             "format_datetime": lambda value, dt_format=False: format_datetime(env, value, dt_format=dt_format),
             "format_amount": lambda amount, currency: format_amount(env, amount, currency),
             "tax_groups": tax_groups,
+            # Odoo's weight unit is a setting, not a field: "kg" or "lb".
+            "weight_uom_name": (
+                env["product.template"]._get_weight_uom_name_from_ir_config_parameter()
+                if "product.template" in env
+                else ""
+            ),
         }
 
     def _pdfs_build_data(self, record, schema=None):

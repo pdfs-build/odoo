@@ -95,6 +95,7 @@
                                 <li><code>image(binary)</code>: an image or binary field as the data URL image fields expect, e.g. <code>image(record.company_id.logo)</code></li>
                                 <li><code>html2plaintext(html)</code>: plain text from an HTML field such as notes</li>
                                 <li><code>tax_groups(record)</code>: the taxes of an invoice or order as a list of <code>{"name", "base", "amount"}</code></li>
+                                <li><code>weight_uom_name</code>: the weight unit of the Inventory settings, "kg" or "lb"</li>
                             </ul>
                             <h5>Templates that fill themselves in</h5>
                             <p>
