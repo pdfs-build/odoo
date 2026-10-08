@@ -388,7 +388,8 @@ def _scalar_expr(spec, field, model, expr, var):
                 currency_field = "currency_id"
             return "format_amount(%s, %s.%s)" % (expr, var, currency_field)
         if field.type == "many2one":
-            return "%s.display_name" % expr
+            # A state's display_name is "Oregon (US)"; an address wants "Oregon".
+            return "%s.%s" % (expr, "name" if field.comodel_name == "res.country.state" else "display_name")
         if field.type in _X2MANY:
             return '", ".join(%s.mapped("display_name"))' % expr
         if field.type in ("float", "integer"):
@@ -468,6 +469,8 @@ def _skeleton_value(name, spec, sample, depth, model, var):
         resolved = _scalar_expr(spec, field, model, expr, var)
         if resolved is not None:
             return resolved, ""
+    if name == "weight_uom_name" and kind == "string" and model is not None:
+        return "weight_uom_name", ""
     example = "e.g. %s" % json.dumps(sample, ensure_ascii=False)[:60] if sample not in (None, "", [], {}) else ""
     comment = ": ".join(part for part in (todo, example) if part)
     if kind in ("number", "integer"):
