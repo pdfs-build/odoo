@@ -296,6 +296,40 @@ class TestPdfsBuild(TransactionCase):
         form._onchange_model_id()
         self.assertIn('"comment": html2plaintext(record.comment or ""),', form.pdfs_build_data_expr)
 
+    def test_lines_skip_sections_and_prices_are_money(self):
+        """Mapping rules that only order models exercise, checked on a stand-in model."""
+        from odoo.addons.pdfs_build.models.pdfs_build_template import _skeleton_entries
+
+        def field(kind, comodel=None):
+            return Mock(type=kind, comodel_name=comodel)
+
+        line = Mock(_fields={
+            "name": field("char"), "price_unit": field("float"), "price_subtotal": field("monetary"),
+            "display_type": field("selection"), "currency_id": field("many2one", "res.currency"),
+        })
+        order = Mock(_fields={
+            "order_line": field("one2many", "sale.order.line"), "weight": field("float"),
+            "currency_id": field("many2one", "res.currency"), "tax_totals": field("binary"),
+        })
+        order.env = line.env = {"sale.order.line": line}
+        properties = {
+            "weight": {"type": "string"},
+            "tax_totals": {"type": "array", "items": {"type": "object", "properties": {"name": {"type": "string"}}}},
+            "order_line": {
+                "type": "array",
+                "items": {"type": "object", "properties": {
+                    "name": {"type": "string"}, "price_unit": {"type": "string"}, "price_subtotal": {"type": "string"},
+                }},
+            },
+        }
+        skeleton = "\n".join(_skeleton_entries(properties, {}, 1, order))
+        self.assertIn('"weight": format_amount(record.weight, record.currency_id),', skeleton)
+        self.assertIn('"tax_totals": tax_groups(record),', skeleton)
+        self.assertIn('"price_unit": format_amount(line.price_unit, line.currency_id),', skeleton)
+        self.assertIn('"price_subtotal": format_amount(line.price_subtotal, line.currency_id),', skeleton)
+        self.assertIn('for line in record.order_line\n        if line.display_type not in ("line_section", "line_note")', skeleton)
+        compile("{%s}" % skeleton, "<skeleton>", "eval")
+
     def test_tax_groups_reads_both_shapes(self):
         currency = self.env.ref("base.USD")
         money = lambda amount: format_amount(self.env, amount, currency)
