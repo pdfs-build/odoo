@@ -8,7 +8,11 @@ import requests
 
 from odoo.exceptions import UserError, ValidationError
 from odoo.tests import TransactionCase
+from odoo.tools.misc import format_amount
 from odoo.tools.pdf import PdfFileReader, PdfFileWriter
+
+from odoo.addons.pdfs_build.models.ir_actions_report import tax_groups
+from odoo.addons.pdfs_build.models.pdfs_build_template import LINES_PLACEHOLDER
 
 REQUEST = "odoo.addons.pdfs_build.models.pdfs_build_template.requests.request"
 ORG = "org_test"
@@ -174,6 +178,154 @@ class TestPdfsBuild(TransactionCase):
         self.env["ir.config_parameter"].sudo().set_param("pdfs_build.api_key", "")
         with self.assertRaisesRegex(UserError, "not configured"):
             self.Template.action_sync()
+
+    ODOO_SCHEMA = {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string"},
+            "email": {"type": "string"},
+            "comment": {"type": "string"},
+            "create_date": {"type": "string"},
+            "color": {"type": "number"},
+            "active": {"type": "boolean"},
+            "category_id": {"type": "string"},
+            "parent_id": {"type": "object", "properties": {"name": {"type": "string"}, "city": {"type": "string"}}},
+            "company_id": {
+                "type": "object",
+                "properties": {"name": {"type": "string"}, "primary_color": {"type": "string"}},
+            },
+            "logo": {"type": "string", "format": "image"},
+            "child_ids": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {"type": "string"},
+                        "email": {"type": "string"},
+                        "bank_ids": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {"acc_number": {"type": "string"}, "bank_id": {"type": "string"}},
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    }
+
+    def test_skeleton_maps_odoo_fields(self):
+        """A schema named after Odoo's fields is mapped without a placeholder left behind."""
+        self._sync()
+        template = self.Template.search([("external_id", "=", "odoo-quotation")])
+        extra = {
+            "tax_totals": {"type": "array", "items": {"type": "object", "properties": {"name": {"type": "string"}}}},
+            "nickname": {"type": "string"},
+        }
+        template.schema_json = json.dumps({**self.ODOO_SCHEMA, "properties": {**self.ODOO_SCHEMA["properties"], **extra}})
+        template.sample_data_json = json.dumps({"nickname": "Ace"})
+        skeleton = template._data_expr_skeleton("res.partner")
+        compile(skeleton, "<skeleton>", "eval")
+        for expected in (
+            '"name": record.name,',
+            '"comment": html2plaintext(record.comment or ""),',
+            '"create_date": format_date(record.create_date),',
+            '"color": record.color,',
+            '"active": record.active,',
+            '"category_id": ", ".join(record.category_id.mapped("display_name")),',
+            '"city": record.parent_id.city,',
+            '"primary_color": record.company_id.primary_color,',
+            '"logo": image(record.company_id.logo),',
+            "for line in record.child_ids",
+            '"email": line.email,',
+            "for item in line.bank_ids",
+            '"bank_id": item.bank_id.display_name,',
+            '"nickname": "",  # TODO: e.g. "Ace"',
+            "for line in %s" % LINES_PLACEHOLDER,
+        ):
+            self.assertIn(expected, skeleton)
+        # The model-less skeleton is unchanged by the mapping.
+        self.assertIn('"nickname": "",  # e.g. "Ace"', template._data_expr_skeleton())
+
+    def test_mapped_expression_evaluates(self):
+        self._sync()
+        template = self.Template.search([("external_id", "=", "odoo-quotation")])
+        template.schema_json = json.dumps(self.ODOO_SCHEMA)
+        template.sample_data_json = "{}"
+        partner = self.env["res.partner"].create({
+            "name": "Toyco Inc.",
+            "email": "accounts@toyco.com",
+            "company_id": self.env.company.id,
+            "comment": "<p>Net <b>30</b></p>",
+            "child_ids": [(0, 0, {"name": "Dana Whitfield", "email": "dana@toyco.com"})],
+        })
+        report = self.env["ir.actions.report"].create({
+            "name": "Partner card",
+            "model": "res.partner",
+            "pdfs_build_template_id": template.id,
+        })
+        self.assertEqual(report.pdfs_build_data_expr, template._data_expr_skeleton("res.partner"))
+        data = report._pdfs_build_data(partner)
+        self.assertEqual(data["name"], "Toyco Inc.")
+        self.assertEqual(data["comment"], "Net *30*")  # html2plaintext marks bold with stars
+        self.assertEqual(data["parent_id"], {"name": "", "city": ""})
+        self.assertEqual(data["child_ids"], [{"name": "Dana Whitfield", "email": "dana@toyco.com", "bank_ids": []}])
+        self.assertEqual(data["company_id"]["name"], self.env.company.name)
+        self.assertTrue(data["logo"].startswith("data:image/"))
+        self.assertIsInstance(data["active"], bool)
+
+    def test_expression_follows_the_model_until_edited(self):
+        self._sync()
+        template = self.Template.search([("external_id", "=", "odoo-quotation")])
+        template.schema_json = json.dumps(self.ODOO_SCHEMA)
+        Report = self.env["ir.actions.report"]
+        report = Report.create({"name": "Card", "model": "res.bank", "pdfs_build_template_id": template.id})
+        self.assertIn('"comment": "",  # TODO', report.pdfs_build_data_expr)
+        report.write({"model": "res.partner"})
+        self.assertIn('"comment": html2plaintext(record.comment or ""),', report.pdfs_build_data_expr)
+        report.pdfs_build_data_expr = '{"name": record.display_name}'
+        report.write({"model": "res.users"})
+        self.assertEqual(report.pdfs_build_data_expr, '{"name": record.display_name}')
+        # The form's onchange does the same for a report being edited.
+        form = Report.new({"name": "Form", "model": "res.bank", "pdfs_build_template_id": template.id})
+        form._onchange_pdfs_build_template_id()
+        self.assertIn('"comment": "",  # TODO', form.pdfs_build_data_expr)
+        form.model_id = self.env["ir.model"]._get("res.partner")
+        form._onchange_model_id()
+        self.assertIn('"comment": html2plaintext(record.comment or ""),', form.pdfs_build_data_expr)
+
+    def test_tax_groups_reads_both_shapes(self):
+        currency = self.env.ref("base.USD")
+        money = lambda amount: format_amount(self.env, amount, currency)
+        record = Mock(env=self.env, currency_id=currency)
+        record._fields = {"tax_totals": True, "currency_id": True}
+        record.tax_totals = {
+            "groups_by_subtotal": {
+                "Untaxed Amount": [{"tax_group_name": "VAT 5%", "tax_group_base_amount": 100.0, "tax_group_amount": 5.0}]
+            }
+        }
+        self.assertEqual(tax_groups(record), [{"name": "VAT 5%", "base": money(100.0), "amount": money(5.0)}])
+        record.tax_totals = {
+            "subtotals": [{
+                "name": "Untaxed Amount",
+                "tax_groups": [
+                    {"group_name": "VAT 5%", "group_label": None, "base_amount_currency": 100.0, "tax_amount_currency": 5.0},
+                    {"group_name": "Excise", "group_label": "Excise duty", "base_amount_currency": 40.0, "tax_amount_currency": 8.0},
+                ],
+            }]
+        }
+        self.assertEqual(
+            tax_groups(record),
+            [
+                {"name": "VAT 5%", "base": money(100.0), "amount": money(5.0)},
+                {"name": "Excise duty", "base": money(40.0), "amount": money(8.0)},
+            ],
+        )
+        record.tax_totals = False
+        self.assertEqual(tax_groups(record), [])
+        record._fields = {}
+        self.assertEqual(tax_groups(record), [])
 
     def test_skeleton_covers_the_schema(self):
         self._sync()

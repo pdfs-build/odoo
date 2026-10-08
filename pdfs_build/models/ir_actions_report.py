@@ -52,6 +52,42 @@ def image(value):
     return "data:%s;base64,%s" % (guess_mimetype(raw, default="image/png"), base64.b64encode(raw).decode())
 
 
+def tax_groups(record):
+    """The document's taxes as [{"name", "base", "amount"}] with formatted amounts.
+
+    Read from Odoo's ``tax_totals`` dictionary (invoices, sales and purchase
+    orders), which changed shape in Odoo 18; both shapes are handled. Empty for
+    a record without taxes or without the field.
+    """
+    totals = record.tax_totals if "tax_totals" in record._fields else None
+    if not isinstance(totals, dict):
+        return []
+    currency = record.currency_id if "currency_id" in record._fields else record.env.company.currency_id
+
+    def money(amount):
+        return format_amount(record.env, amount or 0.0, currency)
+
+    groups = []
+    by_subtotal = totals.get("groups_by_subtotal") or totals.get("groups_by_subtotals")
+    if isinstance(by_subtotal, dict):  # Odoo 17
+        for subtotal in by_subtotal.values():
+            for group in subtotal or ():
+                groups.append({
+                    "name": group.get("tax_group_name") or "",
+                    "base": group.get("formatted_tax_group_base_amount") or money(group.get("tax_group_base_amount")),
+                    "amount": group.get("formatted_tax_group_amount") or money(group.get("tax_group_amount")),
+                })
+        return groups
+    for subtotal in totals.get("subtotals") or ():  # Odoo 18+
+        for group in subtotal.get("tax_groups") or ():
+            groups.append({
+                "name": group.get("group_label") or group.get("group_name") or "",
+                "base": money(group.get("base_amount_currency", group.get("base_amount"))),
+                "amount": money(group.get("tax_amount_currency", group.get("tax_amount"))),
+            })
+    return groups
+
+
 def _coerce(value, schema):
     """Make Odoo values fit the template's JSON Schema.
 
@@ -95,7 +131,8 @@ class IrActionsReport(models.Model):
         help="Python expression evaluated for each printed record. It must return the "
         "dict the template expects. Available: record, env, user, company, datetime, "
         "dateutil, relativedelta, time, image(binary), html2plaintext(html), "
-        "format_date(value), format_datetime(value), format_amount(amount, currency).",
+        "format_date(value), format_datetime(value), format_amount(amount, currency), "
+        "tax_groups(record).",
     )
     pdfs_build_version = fields.Char(
         string="Template Version",
@@ -159,6 +196,18 @@ class IrActionsReport(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        # A report created from code (RPC, a script) gets the same prefill as the
+        # form: technical name, file name and the expression for its model.
+        for vals in vals_list:
+            template = self.env["pdfs_build.template"].browse(vals.get("pdfs_build_template_id") or [])
+            if template.exists():
+                draft = self.new(vals)
+                if draft.model_id and not draft.model:
+                    draft.model = draft.model_id.model
+                draft._pdfs_build_prefill(template)
+                for name in ("report_type", "name", "report_name", "print_report_name", "pdfs_build_data_expr"):
+                    if not vals.get(name):
+                        vals[name] = draft[name]
         reports = super().create(vals_list)
         # A pdfs.build report exists to be printed: put it in the Print menu right away.
         reports.filtered(lambda r: r.pdfs_build_template_id and not r.binding_model_id).create_action()
@@ -166,7 +215,10 @@ class IrActionsReport(models.Model):
         return reports
 
     def write(self, vals):
+        previous = {report.id: report.model for report in self} if "model" in vals or "model_id" in vals else None
         result = super().write(vals)
+        if previous is not None and "pdfs_build_data_expr" not in vals:
+            self._pdfs_build_regenerate_expr(previous)
         if "pdfs_build_version" in vals or "pdfs_build_template_id" in vals:
             self._pdfs_build_fetch_version_schema()
         return result
@@ -201,9 +253,12 @@ class IrActionsReport(models.Model):
     @api.onchange("model_id")
     def _onchange_model_id(self):
         if self.model_id:
+            # The model the form held before this change: the in-memory value for a
+            # record being created, the stored one otherwise.
+            previous = self.model or (self._origin.model if self._origin else False)
             self.model = self.model_id.model
             self.pdfs_build_preview_record_id = False
-            self._pdfs_build_fill_lines_field()
+            self._pdfs_build_regenerate_expr(previous)
 
     @api.onchange("pdfs_build_template_id")
     def _onchange_pdfs_build_template_id(self):
@@ -222,8 +277,36 @@ class IrActionsReport(models.Model):
             # A Python literal, so names with quotes, % or backslashes stay valid.
             self.print_report_name = "object.display_name + ' - ' + %r" % template.name
         if not self.pdfs_build_data_expr:
-            self.pdfs_build_data_expr = template._data_expr_skeleton()
+            self.pdfs_build_data_expr = template._data_expr_skeleton(self.model)
             self._pdfs_build_fill_lines_field()
+
+    def _pdfs_build_expr_untouched(self, previous_model):
+        """True when the expression is still the generated skeleton (for ``previous_model``
+        or for no model), so it can be regenerated for another model without losing edits."""
+        self.ensure_one()
+        template = self.pdfs_build_template_id
+        expression = (self.pdfs_build_data_expr or "").strip()
+        if not template or not expression:
+            return True
+        # Both skeletons, before and after the lines placeholder was filled in, for the
+        # model the expression was generated for and for no model at all.
+        candidates = set()
+        for model in {None, previous_model or None}:
+            skeleton = template._data_expr_skeleton(model)
+            candidates.add(skeleton)
+            lines_field = model and model in self.env and _lines_field(
+                name for name, field in self.env[model]._fields.items() if field.type == "one2many"
+            )
+            if lines_field:
+                candidates.add(skeleton.replace(LINES_PLACEHOLDER, "record.%s" % lines_field))
+        return expression in candidates
+
+    def _pdfs_build_regenerate_expr(self, previous_model):
+        """Rewrite a still-untouched expression for the report's current model."""
+        for report in self.filtered("pdfs_build_template_id"):
+            if report._pdfs_build_expr_untouched(previous_model.get(report.id) if isinstance(previous_model, dict) else previous_model):
+                report.pdfs_build_data_expr = report.pdfs_build_template_id._data_expr_skeleton(report.model)
+                report._pdfs_build_fill_lines_field()
 
     def action_pdfs_build_use_template(self):
         """List header button: render the selected (existing) reports with the template in context."""
@@ -266,6 +349,7 @@ class IrActionsReport(models.Model):
             "format_date": lambda value, date_format=False: format_date(env, value, date_format=date_format),
             "format_datetime": lambda value, dt_format=False: format_datetime(env, value, dt_format=dt_format),
             "format_amount": lambda amount, currency: format_amount(env, amount, currency),
+            "tax_groups": tax_groups,
         }
 
     def _pdfs_build_data(self, record, schema=None):
