@@ -94,7 +94,16 @@
                                 <li><code>format_amount(amount, currency)</code>: an amount with its currency symbol, e.g. <code>format_amount(record.amount_total, record.currency_id)</code></li>
                                 <li><code>image(binary)</code>: an image or binary field as the data URL image fields expect, e.g. <code>image(record.company_id.logo)</code></li>
                                 <li><code>html2plaintext(html)</code>: plain text from an HTML field such as notes</li>
+                                <li><code>tax_groups(record)</code>: the taxes of an invoice or order as a list of <code>{"name", "base", "amount"}</code></li>
                             </ul>
+                            <h5>Templates that fill themselves in</h5>
+                            <p>
+                                When a template's fields are named after Odoo's own (<code>partner_id</code>,
+                                <code>invoice_line_ids</code>, <code>amount_total</code>…), choosing the model writes the
+                                whole expression: every matching field is read automatically, nested records and lines
+                                included, and only the fields Odoo does not have are left as <code>TODO</code>. The
+                                <b>Odoo</b> category of the pdfs.build template gallery is built this way.
+                            </p>
                             <h5>Example: a quotation from a Sales Order</h5>
 <pre>{
     "quoteNumber": record.name,
