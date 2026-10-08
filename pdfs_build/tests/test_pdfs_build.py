@@ -222,6 +222,8 @@ class TestPdfsBuild(TransactionCase):
         extra = {
             "tax_totals": {"type": "array", "items": {"type": "object", "properties": {"name": {"type": "string"}}}},
             "nickname": {"type": "string"},
+            "weight_uom_name": {"type": "string"},
+            "state_id": {"type": "string"},
         }
         template.schema_json = json.dumps({**self.ODOO_SCHEMA, "properties": {**self.ODOO_SCHEMA["properties"], **extra}})
         template.sample_data_json = json.dumps({"nickname": "Ace"})
@@ -242,6 +244,8 @@ class TestPdfsBuild(TransactionCase):
             "for item in line.bank_ids",
             '"bank_id": item.bank_id.display_name,',
             '"nickname": "",  # TODO: e.g. "Ace"',
+            '"weight_uom_name": weight_uom_name,',
+            '"state_id": record.state_id.name,',
             "for line in %s" % LINES_PLACEHOLDER,
         ):
             self.assertIn(expected, skeleton)
@@ -274,6 +278,7 @@ class TestPdfsBuild(TransactionCase):
         self.assertEqual(data["company_id"]["name"], self.env.company.name)
         self.assertTrue(data["logo"].startswith("data:image/"))
         self.assertIsInstance(data["active"], bool)
+        self.assertEqual(report._pdfs_build_eval_context(partner)["weight_uom_name"], "")
 
     def test_expression_follows_the_model_until_edited(self):
         self._sync()
