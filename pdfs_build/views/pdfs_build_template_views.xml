@@ -4,7 +4,7 @@
         <field name="name">pdfs_build.template.list</field>
         <field name="model">pdfs_build.template</field>
         <field name="arch" type="xml">
-            <list string="pdfs.build Templates" create="0">
+            <tree string="pdfs.build Templates" create="0">
                 <header>
                     <button name="action_sync" type="object" string="Sync Templates"
                             display="always" class="btn-primary" icon="fa-refresh"/>
@@ -17,7 +17,7 @@
                 <field name="data_fields"/>
                 <field name="report_count" string="Reports"/>
                 <field name="last_synced" optional="hide"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -76,11 +76,11 @@
                         </page>
                         <page string="Reports" name="reports">
                             <field name="report_ids" nolabel="1">
-                                <list>
+                                <tree>
                                     <field name="name"/>
                                     <field name="model_id"/>
                                     <field name="binding_model_id" string="In Print Menu Of"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
                     </notebook>
@@ -121,7 +121,7 @@
     <record id="action_templates" model="ir.actions.act_window">
         <field name="name">Templates</field>
         <field name="res_model">pdfs_build.template</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="view_template_search"/>
         <field name="context">{'search_default_published': 1}</field>
         <field name="help" type="html">

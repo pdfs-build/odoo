@@ -36,7 +36,7 @@
                         <group>
                             <field name="pdfs_build_template_id" required="1" options="{'no_create': True}"/>
                             <field name="model_id" required="1" string="Odoo Model"
-                                   domain="[('transient', '=', False), ('abstract', '=', False)]"
+                                   domain="[('transient', '=', False)]"
                                    options="{'no_create': True, 'no_open': True}"/>
                             <field name="model" invisible="1"/>
                             <field name="report_type" invisible="1"/>
@@ -76,12 +76,12 @@
                                 <code>record.partner_id.email</code>; one2many fields are lists to loop over.
                             </p>
                             <field name="pdfs_build_model_field_ids" nolabel="1" readonly="1">
-                                <list limit="200">
+                                <tree limit="200">
                                     <field name="field_description" string="Label"/>
                                     <field name="name" string="Field Name"/>
                                     <field name="ttype" string="Type"/>
                                     <field name="relation" string="Related Model"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
                         <page string="Help" name="help">
@@ -125,7 +125,7 @@
                                     <field name="attachment_use"/>
                                 </group>
                                 <group>
-                                    <field name="group_ids" widget="many2many_tags"/>
+                                    <field name="groups_id" widget="many2many_tags"/>
                                 </group>
                             </group>
                         </page>
@@ -155,7 +155,7 @@
         <field name="model">ir.actions.report</field>
         <field name="priority">99</field>
         <field name="arch" type="xml">
-            <list string="Existing Reports" create="0" edit="0">
+            <tree string="Existing Reports" create="0" edit="0">
                 <header>
                     <button name="action_pdfs_build_use_template" type="object" string="Use Template"
                             class="btn-primary" icon="fa-check"/>
@@ -164,7 +164,7 @@
                 <field name="model_id"/>
                 <field name="binding_model_id" string="In Print Menu Of"/>
                 <field name="report_name" string="Technical Name"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -186,24 +186,24 @@
         <field name="model">ir.actions.report</field>
         <field name="priority">50</field>
         <field name="arch" type="xml">
-            <list string="pdfs.build Reports">
+            <tree string="pdfs.build Reports">
                 <field name="name"/>
                 <field name="pdfs_build_template_id"/>
                 <field name="model_id"/>
                 <field name="binding_model_id" string="In Print Menu Of"/>
                 <field name="report_name" optional="hide"/>
-            </list>
+            </tree>
         </field>
     </record>
 
     <record id="action_reports" model="ir.actions.act_window">
         <field name="name">Reports</field>
         <field name="res_model">ir.actions.report</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="domain">[('pdfs_build_template_id', '!=', False)]</field>
         <field name="view_ids" eval="[
             Command.clear(),
-            Command.create({'view_mode': 'list', 'view_id': ref('view_report_list')}),
+            Command.create({'view_mode': 'tree', 'view_id': ref('view_report_list')}),
             Command.create({'view_mode': 'form', 'view_id': ref('view_report_form')}),
         ]"/>
         <field name="help" type="html">

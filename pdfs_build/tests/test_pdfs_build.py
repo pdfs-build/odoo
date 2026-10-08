@@ -64,8 +64,9 @@ def response(status=200, body=None, pdf=None):
 
 def blank_pdf(pages=1):
     writer = PdfFileWriter()
+    add_blank_page = getattr(writer, "add_blank_page", None) or writer.addBlankPage  # PyPDF2 1.x on Odoo 17
     for _ in range(pages):
-        writer.add_blank_page(width=200, height=200)
+        add_blank_page(width=200, height=200)
     stream = io.BytesIO()
     writer.write(stream)
     return stream.getvalue()

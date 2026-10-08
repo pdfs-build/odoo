@@ -20,7 +20,7 @@ Rendering over the API needs a pdfs.build Starter plan or higher.
     "website": "https://pdfs.build",
     "support": "hello@pdfs.build",
     "category": "Productivity",
-    "version": "19.0.1.0.0",
+    "version": "17.0.1.0.0",
     "license": "LGPL-3",
     "depends": ["base", "web"],
     "external_dependencies": {"python": ["requests"]},

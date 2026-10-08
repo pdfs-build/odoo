@@ -53,9 +53,9 @@ class PdfsBuildTemplate(models.Model):
     )
     report_count = fields.Integer(compute="_compute_report_count")
 
-    _external_id_unique = models.Constraint(
-        "UNIQUE(external_id)", "This pdfs.build template is already synced."
-    )
+    _sql_constraints = [
+        ("external_id_unique", "UNIQUE(external_id)", "This pdfs.build template is already synced."),
+    ]
 
     @api.depends("schema_json")
     def _compute_data_fields(self):
@@ -155,7 +155,6 @@ class PdfsBuildTemplate(models.Model):
 
     @api.model
     def _status_hint(self, status):
-        _ = self.env._
         return {
             401: _("Check the API key under Settings > pdfs.build."),
             402: _("Rendering over the API needs a pdfs.build Starter plan or higher."),
@@ -282,7 +281,7 @@ class PdfsBuildTemplate(models.Model):
             "name": _("Replace an existing report with %s", self.name),
             "res_model": "ir.actions.report",
             "views": [
-                (self.env.ref("pdfs_build.view_report_pick_list").id, "list"),
+                (self.env.ref("pdfs_build.view_report_pick_list").id, "tree"),
                 (self.env.ref("pdfs_build.view_report_form").id, "form"),
             ],
             "search_view_id": (self.env.ref("pdfs_build.view_report_pick_search").id, "pick"),
