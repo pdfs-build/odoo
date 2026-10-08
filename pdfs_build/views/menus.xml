@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_root" name="pdfs.build" sequence="95"
+              web_icon="pdfs_build,static/description/icon.png"
+              groups="base.group_system"/>
+    <menuitem id="menu_templates" name="Templates" parent="menu_root" action="action_templates" sequence="10"/>
+    <menuitem id="menu_reports" name="Reports" parent="menu_root" action="action_reports" sequence="20"/>
+    <menuitem id="menu_settings" name="Settings" parent="menu_root" action="action_settings" sequence="90"/>
+</odoo>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_template_list" model="ir.ui.view">
+        <field name="name">pdfs_build.template.list</field>
+        <field name="model">pdfs_build.template</field>
+        <field name="arch" type="xml">
+            <list string="pdfs.build Templates" create="0">
+                <header>
+                    <button name="action_sync" type="object" string="Sync Templates"
+                            display="always" class="btn-primary" icon="fa-refresh"/>
+                </header>
+                <field name="name"/>
+                <field name="external_id" optional="show"/>
+                <field name="status" widget="badge"
+                       decoration-success="status == 'published'"
+                       decoration-muted="status == 'draft'"/>
+                <field name="data_fields"/>
+                <field name="report_count" string="Reports"/>
+                <field name="last_synced" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_template_form" model="ir.ui.view">
+        <field name="name">pdfs_build.template.form</field>
+        <field name="model">pdfs_build.template</field>
+        <field name="arch" type="xml">
+            <form string="pdfs.build Template" create="0">
+                <header>
+                    <button name="action_new_report" type="object" string="New Report"
+                            class="btn-primary" icon="fa-print"
+                            help="Add a Print menu entry that renders an Odoo model with this template"/>
+                    <button name="action_use_for_existing_report" type="object" string="Use for Existing Report"
+                            icon="fa-exchange"
+                            help="Render one of Odoo's own reports (Invoices, Quotation / Order...) with this template instead of its QWeb layout"/>
+                    <button name="action_preview_sample" type="object" string="Preview Sample PDF"
+                            icon="fa-file-pdf-o" help="Render the template with its sample data"/>
+                    <button name="action_open_editor" type="object" string="Open in pdfs.build"
+                            icon="fa-external-link"/>
+                    <button name="action_refresh" type="object" string="Refresh" icon="fa-refresh"
+                            help="Reload the template's schema and sample data from pdfs.build"/>
+                    <field name="status" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_reports" type="object" class="oe_stat_button" icon="fa-print">
+                            <field name="report_count" widget="statinfo" string="Reports"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="external_id"/>
+                            <field name="last_synced"/>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Data Fields" name="schema">
+                            <p class="text-muted">
+                                The data a report sends to this template. A report's data expression
+                                returns one value per field; <code>items[].name</code> means each entry
+                                of the <code>items</code> list has a <code>name</code>.
+                            </p>
+                            <field name="schema_html" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="Sample Data" name="sample">
+                            <field name="sample_data_json" widget="code" options="{'mode': 'javascript'}" nolabel="1"/>
+                        </page>
+                        <page string="Schema (JSON)" name="schema_json">
+                            <field name="schema_json" widget="code" options="{'mode': 'javascript'}" nolabel="1"/>
+                        </page>
+                        <page string="Reports" name="reports">
+                            <field name="report_ids" nolabel="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="model_id"/>
+                                    <field name="binding_model_id" string="In Print Menu Of"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_template_preview_form" model="ir.ui.view">
+        <field name="name">pdfs_build.template.preview</field>
+        <field name="model">pdfs_build.template</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <form string="Sample PDF" create="0" edit="0" class="o_pdfs_build_preview">
+                <field name="preview_pdf" widget="pdf_viewer" nolabel="1"/>
+                <footer>
+                    <button string="Close" special="cancel" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_template_search" model="ir.ui.view">
+        <field name="name">pdfs_build.template.search</field>
+        <field name="model">pdfs_build.template</field>
+        <field name="arch" type="xml">
+            <search string="Templates">
+                <field name="name"/>
+                <field name="external_id"/>
+                <filter name="published" string="Published" domain="[('status', '=', 'published')]"/>
+                <filter name="draft" string="Draft" domain="[('status', '=', 'draft')]"/>
+                <separator/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_templates" model="ir.actions.act_window">
+        <field name="name">Templates</field>
+        <field name="res_model">pdfs_build.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_template_search"/>
+        <field name="context">{'search_default_published': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No templates yet</p>
+            <p>
+                Enter your API key under Settings &gt; pdfs.build, then click
+                <b>Sync Templates</b> to pull the published templates of your organization.
+            </p>
+        </field>
+    </record>
+</odoo>

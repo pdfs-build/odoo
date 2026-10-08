@@ -1,0 +1,5 @@
+// The PDF preview dialogs: Odoo sizes the pdf.js frame at 450px, which is a strip of a page.
+.o_field_pdf_viewer[name="pdfs_build_preview_pdf"] .o_pdfview_iframe,
+.o_field_pdf_viewer[name="preview_pdf"] .o_pdfview_iframe {
+    height: 75vh;
+}

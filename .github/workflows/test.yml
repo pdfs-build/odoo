@@ -1,0 +1,38 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  odoo:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U odoo -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Odoo version of this branch
+        id: odoo
+        run: echo "version=$(python3 -c "import ast; print(ast.literal_eval(open('pdfs_build/__manifest__.py').read())['version'].split('.')[0])")" >> "$GITHUB_OUTPUT"
+      - name: Install the module on a fresh database and run its tests
+        run: |
+          docker run --rm --network host -v "$PWD:/mnt/addons:ro" \
+            odoo:${{ steps.odoo.outputs.version }} \
+            odoo -d test -i pdfs_build --addons-path=/mnt/addons \
+            --db_host=127.0.0.1 --db_user=odoo --db_password=odoo \
+            --test-enable --test-tags /pdfs_build --stop-after-init --no-http --log-level=test 2>&1 | tee odoo.log
+          grep -E "tests when loading database" odoo.log
+          ! grep -E "(ERROR|CRITICAL) test " odoo.log
+          ! grep -qE "[1-9][0-9]* failed|[1-9][0-9]* error\(s\)" odoo.log

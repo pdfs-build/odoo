@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_report_form" model="ir.ui.view">
+        <field name="name">ir.actions.report.form.pdfs_build</field>
+        <field name="model">ir.actions.report</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <form string="pdfs.build Report">
+                <header>
+                    <button name="action_pdfs_build_preview_pdf" type="object" string="Preview PDF"
+                            class="btn-primary" icon="fa-file-pdf-o"
+                            help="Render the latest record of the model and show the PDF"/>
+                    <button name="action_pdfs_build_preview" type="object" string="Preview Data"
+                            icon="fa-code" help="Show the data the latest record would send"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="create_action" type="object" invisible="binding_model_id"
+                                icon="fa-plus-square" class="oe_stat_button">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Add to the 'Print' menu</span>
+                            </div>
+                        </button>
+                        <button name="unlink_action" type="object" invisible="not binding_model_id"
+                                icon="fa-minus-square" class="oe_stat_button">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Remove from the 'Print' menu</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" string="Shown in the Print menu as"/>
+                        <h1><field name="name" placeholder="e.g. Quotation"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pdfs_build_template_id" required="1" options="{'no_create': True}"/>
+                            <field name="model_id" required="1" string="Odoo Model"
+                                   domain="[('transient', '=', False), ('abstract', '=', False)]"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                            <field name="model" invisible="1"/>
+                            <field name="report_type" invisible="1"/>
+                            <field name="binding_model_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="print_report_name" string="PDF File Name"
+                                   placeholder="'%s - Quotation' % object.display_name"/>
+                            <field name="pdfs_build_version" placeholder="latest"/>
+                            <field name="pdfs_build_preview_record_id" widget="many2one_reference"
+                                   options="{'no_create': True}" placeholder="Latest record"/>
+                            <field name="report_name" string="Technical Name"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Data" name="data">
+                            <p class="text-muted">
+                                A Python expression evaluated for each printed <code>record</code>; it returns the
+                                data the template expects. The <b>Template Fields</b> and <b>Odoo Fields</b> tabs list
+                                both sides; <b>Help</b> has a worked example.
+                            </p>
+                            <field name="pdfs_build_data_expr" widget="code" options="{'mode': 'python'}" nolabel="1"/>
+                            <field name="pdfs_build_preview" widget="code" options="{'mode': 'javascript'}"
+                                   nolabel="1" invisible="not pdfs_build_preview"/>
+                        </page>
+                        <page string="Template Fields" name="template_fields">
+                            <p class="text-muted">
+                                What the template expects. <code>items[].name</code> means each entry of the
+                                <code>items</code> list has a <code>name</code>.
+                            </p>
+                            <field name="pdfs_build_schema_html" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="Odoo Fields" name="odoo_fields">
+                            <p class="text-muted">
+                                The fields of the chosen model: use <code>record.&lt;Field Name&gt;</code> in the
+                                expression. Relations give another record, for example
+                                <code>record.partner_id.email</code>; one2many fields are lists to loop over.
+                            </p>
+                            <field name="pdfs_build_model_field_ids" nolabel="1" readonly="1">
+                                <list limit="200">
+                                    <field name="field_description" string="Label"/>
+                                    <field name="name" string="Field Name"/>
+                                    <field name="ttype" string="Type"/>
+                                    <field name="relation" string="Related Model"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Help" name="help">
+                            <h5>Variables</h5>
+                            <ul>
+                                <li><code>record</code> (also <code>object</code>): the record being printed</li>
+                                <li><code>env</code>, <code>user</code>, <code>company</code>: the environment, the current user and company</li>
+                                <li><code>datetime</code>, <code>dateutil</code>, <code>relativedelta</code>, <code>time</code>: date helpers</li>
+                                <li><code>format_date(value)</code>, <code>format_datetime(value)</code>: in the user's language and format</li>
+                                <li><code>format_amount(amount, currency)</code>: an amount with its currency symbol, e.g. <code>format_amount(record.amount_total, record.currency_id)</code></li>
+                                <li><code>image(binary)</code>: an image or binary field as the data URL image fields expect, e.g. <code>image(record.company_id.logo)</code></li>
+                                <li><code>html2plaintext(html)</code>: plain text from an HTML field such as notes</li>
+                            </ul>
+                            <h5>Example: a quotation from a Sales Order</h5>
+<pre>{
+    "quoteNumber": record.name,
+    "issueDate": format_date(record.date_order),
+    "clientName": record.partner_id.commercial_partner_id.name,
+    "clientEmail": record.partner_id.email,
+    "items": [
+        {"name": line.product_id.name, "description": line.name, "amount": line.price_subtotal}
+        for line in record.order_line
+        if not line.display_type
+    ],
+    "total": record.amount_total,
+    "notes": html2plaintext(record.note or ""),
+    "logo": image(record.company_id.logo),
+}</pre>
+                            <h5>Good to know</h5>
+                            <ul>
+                                <li>Empty Odoo fields are <code>False</code>; they are sent as <code>""</code>, <code>0</code> or <code>[]</code> according to the template's schema, and dates as ISO strings.</li>
+                                <li>Send fields of related records, not the records themselves: <code>record.partner_id.name</code>, not <code>record.partner_id</code>.</li>
+                                <li>Images stored with the template keep their sample value; images from Odoo go through <code>image(...)</code>.</li>
+                                <li><b>Preview Data</b> shows the exact data for the latest record; <b>Preview PDF</b> renders it. Errors from pdfs.build name the field or line concerned.</li>
+                            </ul>
+                        </page>
+                        <page string="Advanced" name="advanced">
+                            <group>
+                                <group>
+                                    <field name="attachment" placeholder="'%s.pdf' % object.name"/>
+                                    <field name="attachment_use"/>
+                                </group>
+                                <group>
+                                    <field name="group_ids" widget="many2many_tags"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_report_preview_form" model="ir.ui.view">
+        <field name="name">ir.actions.report.preview.pdfs_build</field>
+        <field name="model">ir.actions.report</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <form string="Preview" create="0" edit="0" class="o_pdfs_build_preview">
+                <field name="pdfs_build_preview_pdf" widget="pdf_viewer" nolabel="1"/>
+                <footer>
+                    <button string="Close" special="cancel" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Odoo's own PDF reports, to pick one to render with a template. -->
+    <record id="view_report_pick_list" model="ir.ui.view">
+        <field name="name">ir.actions.report.pick.pdfs_build</field>
+        <field name="model">ir.actions.report</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <list string="Existing Reports" create="0" edit="0">
+                <header>
+                    <button name="action_pdfs_build_use_template" type="object" string="Use Template"
+                            class="btn-primary" icon="fa-check"/>
+                </header>
+                <field name="name"/>
+                <field name="model_id"/>
+                <field name="binding_model_id" string="In Print Menu Of"/>
+                <field name="report_name" string="Technical Name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_pick_search" model="ir.ui.view">
+        <field name="name">ir.actions.report.pick.search.pdfs_build</field>
+        <field name="model">ir.actions.report</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <search string="Reports">
+                <field name="name"/>
+                <field name="model_id"/>
+                <filter name="in_print_menu" string="In a Print Menu" domain="[('binding_model_id', '!=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_report_list" model="ir.ui.view">
+        <field name="name">ir.actions.report.list.pdfs_build</field>
+        <field name="model">ir.actions.report</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <list string="pdfs.build Reports">
+                <field name="name"/>
+                <field name="pdfs_build_template_id"/>
+                <field name="model_id"/>
+                <field name="binding_model_id" string="In Print Menu Of"/>
+                <field name="report_name" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_reports" model="ir.actions.act_window">
+        <field name="name">Reports</field>
+        <field name="res_model">ir.actions.report</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('pdfs_build_template_id', '!=', False)]</field>
+        <field name="view_ids" eval="[
+            Command.clear(),
+            Command.create({'view_mode': 'list', 'view_id': ref('view_report_list')}),
+            Command.create({'view_mode': 'form', 'view_id': ref('view_report_form')}),
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No reports yet</p>
+            <p>
+                A report prints an Odoo model with a pdfs.build template. Create one here,
+                or from a template with <b>New Report</b>.
+            </p>
+        </field>
+    </record>
+
+    <!-- The pdfs.build fields on Odoo's own report form (Settings > Technical > Reports). -->
+    <record id="view_report_form_inherit" model="ir.ui.view">
+        <field name="name">ir.actions.report.form.inherit.pdfs_build</field>
+        <field name="model">ir.actions.report</field>
+        <field name="inherit_id" ref="base.act_report_xml_view"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="pdfs.build" name="pdfs_build">
+                    <group>
+                        <field name="pdfs_build_template_id"/>
+                        <field name="pdfs_build_version" invisible="not pdfs_build_template_id"/>
+                        <field name="pdfs_build_preview_record_id" widget="many2one_reference"
+                               invisible="not pdfs_build_template_id"/>
+                    </group>
+                    <field name="pdfs_build_data_expr" widget="code" options="{'mode': 'python'}"
+                           nolabel="1" invisible="not pdfs_build_template_id"/>
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>
