@@ -15,6 +15,11 @@ Changes land on `19.0` first and are cherry-picked to the older branches.
 
 The module's own documentation is in [`pdfs_build/README.md`](pdfs_build/README.md).
 
+Templates whose fields are named after Odoo's own (the gallery's
+[Odoo category](https://pdfs.build/templates/odoo-invoice/)) need no data
+expression at all: choosing the model writes it. The contract those templates
+follow lives in the pdfs.build repository under `showcase/odoo/README.md`.
+
 ## Tests
 
 Each branch runs the module's tests on the official Odoo image of its version:
