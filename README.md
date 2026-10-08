@@ -18,9 +18,9 @@ The module's own documentation is in [`pdfs_build/README.md`](pdfs_build/README.
 Each branch runs the module's tests on the official Odoo image of its version:
 
 ```bash
-docker run --rm --network host -v "$PWD:/mnt/addons:ro" odoo:19 \
+docker run --rm --network host -v "$PWD:/mnt/addons:ro" \
+  -e HOST=127.0.0.1 -e USER=odoo -e PASSWORD=odoo odoo:19 \
   odoo -d test -i pdfs_build --addons-path=/mnt/addons \
-  --db_host=127.0.0.1 --db_user=odoo --db_password=odoo \
   --test-enable --test-tags /pdfs_build --stop-after-init --no-http
 ```
 

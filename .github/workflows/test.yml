@@ -28,10 +28,12 @@ jobs:
         run: echo "version=$(python3 -c "import ast; print(ast.literal_eval(open('pdfs_build/__manifest__.py').read())['version'].split('.')[0])")" >> "$GITHUB_OUTPUT"
       - name: Install the module on a fresh database and run its tests
         run: |
+          # The image's entrypoint appends its own --db_host/--db_user/--db_password
+          # from these variables after the arguments, so the connection goes through them.
           docker run --rm --network host -v "$PWD:/mnt/addons:ro" \
+            -e HOST=127.0.0.1 -e USER=odoo -e PASSWORD=odoo \
             odoo:${{ steps.odoo.outputs.version }} \
             odoo -d test -i pdfs_build --addons-path=/mnt/addons \
-            --db_host=127.0.0.1 --db_user=odoo --db_password=odoo \
             --test-enable --test-tags /pdfs_build --stop-after-init --no-http --log-level=test 2>&1 | tee odoo.log
           grep -E "tests when loading database" odoo.log
           ! grep -E "(ERROR|CRITICAL) test " odoo.log
