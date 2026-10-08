@@ -309,11 +309,19 @@ class PdfsBuildTemplate(models.Model):
             name = "%s_%d" % (base, counter)
         return name
 
-    def _data_expr_skeleton(self):
-        """A Python dict literal with one entry per field of the template's schema."""
+    def _data_expr_skeleton(self, model=None):
+        """A Python dict literal with one entry per field of the template's schema.
+
+        With ``model`` (a model name), every key that names a field of that model
+        -- directly, through an alias, or nested through a many2one -- is written
+        as the expression reading it, so a template whose schema follows Odoo's
+        field names (see showcase/odoo/README.md in the pdfs.build repository)
+        needs no editing at all. Other keys get a placeholder to fill in.
+        """
         self.ensure_one()
         properties = self._schema().get("properties") or {}
-        lines = ["{", *_skeleton_entries(properties, self._sample_data(), 1), "}"]
+        model = self.env[model] if model and model in self.env else None
+        lines = ["{", *_skeleton_entries(properties, self._sample_data(), 1, model), "}"]
         return "\n".join(lines)
 
 
@@ -330,7 +338,70 @@ def preview_dialog(record, view_xmlid, title):
     }
 
 
-def _skeleton_entries(properties, sample, depth):
+# Schema keys follow Odoo 19; these are the same fields under their 17/18 names,
+# plus the one slot the editor keeps at top level (a dotted alias walks many2ones).
+FIELD_ALIASES = {
+    "tax_ids": ("tax_id", "taxes_id"),
+    "product_uom_id": ("product_uom",),
+    "note": ("notes",),
+    "logo": ("company_id.logo",),
+}
+# The loop variable of each nesting level of lines inside lines.
+_LOOP_VARS = ("line", "item", "entry")
+_X2MANY = ("one2many", "many2many")
+
+
+def _resolve_field(model, name):
+    """(dotted path, field) for ``name`` on ``model``, through the aliases; (None, None) if absent."""
+    if model is None:
+        return None, None
+    for candidate in (name, *FIELD_ALIASES.get(name, ())):
+        current, path = model, []
+        for step in candidate.split("."):
+            field = current._fields.get(step) if current is not None else None
+            if field is None:
+                break
+            path.append(step)
+            current = current.env[field.comodel_name] if field.type == "many2one" else None
+        else:
+            return ".".join(path), field
+    return None, None
+
+
+def _comodel(model, field):
+    return model.env[field.comodel_name] if field is not None and field.comodel_name else None
+
+
+def _scalar_expr(spec, field, model, expr, var):
+    """The expression reading one scalar schema field, or None when the types cannot meet."""
+    kind = spec.get("type")
+    if kind == "string":
+        if field.type == "binary":
+            return "image(%s)" % expr
+        if field.type == "html":
+            return 'html2plaintext(%s or "")' % expr
+        if field.type in ("date", "datetime"):
+            return "format_date(%s)" % expr
+        if field.type == "monetary":
+            currency_field = getattr(field, "currency_field", None) or "currency_id"
+            if currency_field not in model._fields:
+                currency_field = "currency_id"
+            return "format_amount(%s, %s.%s)" % (expr, var, currency_field)
+        if field.type == "many2one":
+            return "%s.display_name" % expr
+        if field.type in _X2MANY:
+            return '", ".join(%s.mapped("display_name"))' % expr
+        if field.type in ("float", "integer"):
+            return "str(%s)" % expr
+        return expr
+    if kind in ("number", "integer"):
+        return expr if field.type in ("float", "integer", "monetary") else None
+    if kind == "boolean":
+        return expr if field.type == "boolean" else None
+    return None
+
+
+def _skeleton_entries(properties, sample, depth, model=None, var="record"):
     pad = "    " * depth
     sample = sample if isinstance(sample, dict) else {}
     lines = []
@@ -340,39 +411,60 @@ def _skeleton_entries(properties, sample, depth):
         description = " ".join((spec.get("description") or spec.get("title") or "").split())
         if description:
             lines.append("%s# %s" % (pad, description))
-        value, comment = _skeleton_value(spec, sample.get(name), depth)
+        value, comment = _skeleton_value(name, spec, sample.get(name), depth, model, var)
         lines.append("%s%s: %s,%s" % (pad, json.dumps(name), value, "  # " + comment if comment else ""))
     return lines
 
 
-def _skeleton_value(spec, sample, depth):
-    """(python source, trailing comment) placeholder for one schema field."""
+def _skeleton_value(name, spec, sample, depth, model, var):
+    """(python source, trailing comment) for one schema field: the expression reading the
+    matching Odoo field when there is one, else a placeholder."""
     pad = "    " * depth
     kind = spec.get("type")
+    path, field = _resolve_field(model, name)
+    expr = "%s.%s" % (var, path) if path else None
+    todo = "TODO" if model is not None else ""
     if kind == "array":
         items = spec.get("items") if isinstance(spec.get("items"), dict) else {}
+        if name == "tax_totals" and field is not None and field.type not in _X2MANY:
+            return "tax_groups(%s)" % var, ""
         if items.get("type") == "object" and items.get("properties"):
             first = sample[0] if isinstance(sample, list) and sample else {}
-            inner = "\n".join(_skeleton_entries(items["properties"], first, depth + 2))
+            related = _comodel(model, field) if field is not None and field.type in _X2MANY else None
+            loop_var = _LOOP_VARS[min(depth // 2, len(_LOOP_VARS) - 1)]
+            inner = "\n".join(_skeleton_entries(items["properties"], first, depth + 2, related, loop_var))
+            source = expr if related is not None else LINES_PLACEHOLDER
+            guard = "\n%s    if not %s.display_type" % (pad, loop_var) if related is not None and "display_type" in related._fields else ""
             return (
-                "[\n%s    {\n%s\n%s    }\n%s    for line in %s\n%s]"
-                % (pad, inner, pad, pad, LINES_PLACEHOLDER, pad),
+                "[\n%s    {\n%s\n%s    }\n%s    for %s in %s%s\n%s]"
+                % (pad, inner, pad, pad, loop_var, source, guard, pad),
                 "",
             )
-        return "[]", ""
+        if field is not None and field.type in _X2MANY:
+            return '%s.mapped("display_name")' % expr, ""
+        return "[]", todo
     if kind == "object" and spec.get("properties"):
-        inner = "\n".join(_skeleton_entries(spec["properties"], sample, depth + 1))
+        related = _comodel(model, field) if field is not None and field.type == "many2one" else None
+        inner_var = expr if related is not None else var
+        inner = "\n".join(_skeleton_entries(spec["properties"], sample, depth + 1, related, inner_var))
         return "{\n%s\n%s}" % (inner, pad), ""
     if kind == "string" and spec.get("format") == "image":
         if spec.get("x-image-mode") == "static":
             return json.dumps(sample or ""), "image stored with the template"
+        if field is not None and field.type == "binary":
+            return "image(%s)" % expr, ""
         return "image(record.image_1920)", "TODO: an image or binary field"
+    if field is not None:
+        resolved = _scalar_expr(spec, field, model, expr, var)
+        if resolved is not None:
+            return resolved, ""
     example = "e.g. %s" % json.dumps(sample, ensure_ascii=False)[:60] if sample not in (None, "", [], {}) else ""
+    comment = ": ".join(part for part in (todo, example) if part)
     if kind in ("number", "integer"):
-        return "0", example
+        return "0", comment
     if kind == "boolean":
-        return "False", example
-    return '""', example
+        return "False", comment
+    return '""', comment
 
 
 def _schema_rows(properties, required, prefix=""):
