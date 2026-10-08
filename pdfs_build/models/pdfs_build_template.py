@@ -393,6 +393,10 @@ def _scalar_expr(spec, field, model, expr, var):
         if field.type in _X2MANY:
             return '", ".join(%s.mapped("display_name"))' % expr
         if field.type in ("float", "integer"):
+            # A string-typed number on a document with a currency is a price
+            # (price_unit is a plain Float in Odoo); elsewhere it is just text.
+            if "currency_id" in model._fields:
+                return "format_amount(%s, %s.currency_id)" % (expr, var)
             return "str(%s)" % expr
         return expr
     if kind in ("number", "integer"):
@@ -435,7 +439,13 @@ def _skeleton_value(name, spec, sample, depth, model, var):
             loop_var = _LOOP_VARS[min(depth // 2, len(_LOOP_VARS) - 1)]
             inner = "\n".join(_skeleton_entries(items["properties"], first, depth + 2, related, loop_var))
             source = expr if related is not None else LINES_PLACEHOLDER
-            guard = "\n%s    if not %s.display_type" % (pad, loop_var) if related is not None and "display_type" in related._fields else ""
+            # Sections and notes are not lines. (account.move.line sets display_type
+            # on product lines too, so the test is for the two kinds, not for truthiness.)
+            guard = (
+                '\n%s    if %s.display_type not in ("line_section", "line_note")' % (pad, loop_var)
+                if related is not None and "display_type" in related._fields
+                else ""
+            )
             return (
                 "[\n%s    {\n%s\n%s    }\n%s    for %s in %s%s\n%s]"
                 % (pad, inner, pad, pad, loop_var, source, guard, pad),
