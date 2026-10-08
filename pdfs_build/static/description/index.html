@@ -41,7 +41,7 @@
         </div>
         <div class="oe_span4">
             <h4>2. Map</h4>
-            <p>Create a report for a template, or take over one of Odoo's own (Invoices, Quotation / Order). Fill in the pre-generated data expression, preview the data and the PDF.</p>
+            <p>Create a report for a template, or take over one of Odoo's own (Invoices, Quotation / Order). Pick the model: a template from the gallery's Odoo category, whose fields are named after Odoo's own, is mapped completely on its own; any other gets a pre-generated expression to finish. Preview the data and the PDF.</p>
         </div>
         <div class="oe_span4">
             <h4>3. Print</h4>
@@ -89,7 +89,9 @@
         <div class="oe_span6">
             <ul>
                 <li>Templates synced from your pdfs.build organization, with their JSON schema and sample data; archive the ones Odoo does not need</li>
-                <li>Data expression pre-generated from the schema, line-item loop pointed at the model's lines, with Preview Data and an in-app PDF preview</li>
+                <li>Data expression written from the schema: every field that matches one of the model's (nested records and lines included) is read automatically, dates, amounts, taxes and images formatted; only fields Odoo does not have are left to fill in</li>
+                <li>Ready-made designs for the invoice, quotation, purchase order and delivery slip in the pdfs.build gallery's Odoo category, which need no mapping at all and take the company logo and document-layout colours from Odoo's settings</li>
+                <li>Preview Data and an in-app PDF preview on every report</li>
                 <li>Replace Odoo's own Invoices or Quotation / Order PDF with a template: email attachments, portal downloads and stored invoice PDFs follow, and Odoo's e-invoice XML embedding still applies</li>
                 <li>Reports in the Print menu, in email templates, and merged when printing several records</li>
                 <li>Save as attachment and reload from attachment, like any Odoo report</li>
