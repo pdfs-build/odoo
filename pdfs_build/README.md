@@ -6,7 +6,7 @@ statements: design the document once in the pdfs.build editor, then map Odoo
 fields to it with a Python expression. The report lands in the record's
 **Print** menu and works in email templates and everywhere else Odoo prints.
 
-Odoo 19 (Community and Enterprise). License LGPL-3.
+Odoo 18 (Community and Enterprise). License LGPL-3.
 
 ## Requirements
 

@@ -53,9 +53,9 @@ class PdfsBuildTemplate(models.Model):
     )
     report_count = fields.Integer(compute="_compute_report_count")
 
-    _external_id_unique = models.Constraint(
-        "UNIQUE(external_id)", "This pdfs.build template is already synced."
-    )
+    _sql_constraints = [
+        ("external_id_unique", "UNIQUE(external_id)", "This pdfs.build template is already synced."),
+    ]
 
     @api.depends("schema_json")
     def _compute_data_fields(self):
