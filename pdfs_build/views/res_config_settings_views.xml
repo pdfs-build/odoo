@@ -32,6 +32,8 @@
                                         string="Sync Templates" class="btn-secondary" icon="fa-refresh"/>
                             </div>
                             <div class="mt8">
+                                <button name="%(pdfs_build.action_gallery)d" type="action"
+                                        string="Designs for Odoo" class="btn-link" icon="oi-arrow-right"/>
                                 <button name="%(pdfs_build.action_templates)d" type="action"
                                         string="Templates" class="btn-link" icon="oi-arrow-right"/>
                                 <button name="%(pdfs_build.action_reports)d" type="action"

@@ -131,7 +131,7 @@ class PdfsBuildTemplate(models.Model):
         )
         headers = {
             "Authorization": "Bearer %s" % settings["api_key"],
-            "Accept": "application/pdf, application/json",
+            "Accept": "application/pdf, image/png, application/json",
         }
         data = None
         if json_body is not None:
@@ -143,8 +143,9 @@ class PdfsBuildTemplate(models.Model):
             raise UserError(
                 _("Could not reach pdfs.build at %(url)s: %(error)s", url=settings["url"], error=error)
             ) from error
-        if response.ok and response.headers.get("Content-Type", "").startswith("application/pdf"):
-            return response.content
+        content_type = response.headers.get("Content-Type", "")
+        if response.ok and not content_type.startswith("application/json"):
+            return response.content  # a PDF, or a preview image
         try:
             body = response.json()
         except ValueError:

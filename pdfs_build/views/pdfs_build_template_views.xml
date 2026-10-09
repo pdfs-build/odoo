@@ -8,6 +8,8 @@
                 <header>
                     <button name="action_sync" type="object" string="Sync Templates"
                             display="always" class="btn-primary" icon="fa-refresh"/>
+                    <button name="%(pdfs_build.action_gallery)d" type="action" string="Designs for Odoo"
+                            display="always" class="btn-secondary" icon="fa-magic"/>
                 </header>
                 <field name="name"/>
                 <field name="external_id" optional="show"/>
