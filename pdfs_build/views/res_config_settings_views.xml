@@ -9,18 +9,29 @@
                 <app data-string="pdfs.build" string="pdfs.build" name="pdfs_build"
                      logo="/pdfs_build/static/description/icon.png">
                     <block title="Connection" name="pdfs_build_connection">
-                        <setting id="pdfs_build_api_key_setting" string="API Key"
-                                 help="Created under Developers &gt; API keys in the pdfs.build app. Shown once. Rendering over the API needs the Starter plan or higher.">
-                            <field name="pdfs_build_api_key" password="True" placeholder="prs_..."/>
+                        <!-- One box, labelled rows, full-width inputs: an organization ID is 32
+                             characters and a key 50, and the default half-width field clips both. -->
+                        <setting id="pdfs_build_connection_setting" string="pdfs.build account"
+                                 help="Both come from Developers &gt; API keys in the pdfs.build app: the key is shown once when created, the Organization ID at the top of the page and must be the organization the key belongs to. Rendering over the API needs the Starter plan or higher.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="pdfs_build_api_key" class="col-lg-3 o_light_label"/>
+                                    <div class="col-lg-9">
+                                        <field name="pdfs_build_api_key" password="True" placeholder="prs_..." class="w-100"/>
+                                    </div>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="pdfs_build_organization_id" class="col-lg-3 o_light_label"/>
+                                    <div class="col-lg-9">
+                                        <field name="pdfs_build_organization_id" placeholder="32 characters" class="w-100"/>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="mt8">
                                 <a href="https://app.pdfs.build/developers/api-keys" target="_blank" class="oe_link">
                                     <i class="oi oi-arrow-right"/> Open Developers &gt; API keys on pdfs.build
                                 </a>
                             </div>
-                        </setting>
-                        <setting id="pdfs_build_organization_setting" string="Organization ID"
-                                 help="Shown at the top of Developers &gt; API keys. It must be the organization the API key belongs to.">
-                            <field name="pdfs_build_organization_id"/>
                         </setting>
                     </block>
                     <block title="Templates" name="pdfs_build_templates">
