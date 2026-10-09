@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_gallery_form" model="ir.ui.view">
+        <field name="name">pdfs_build.gallery.form</field>
+        <field name="model">pdfs_build.gallery</field>
+        <field name="arch" type="xml">
+            <form>
+                <p class="text-muted">
+                    Designs built for Odoo: their fields are Odoo's own, so adding one copies it into your
+                    pdfs.build organization, syncs it, and creates its report with the data expression
+                    already written. Replace Odoo's own report afterwards with <b>Use for Existing Report</b>.
+                </p>
+                <field name="line_ids" nolabel="1">
+                    <tree create="0" delete="0" editable="bottom" no_open="1">
+                        <field name="thumbnail" widget="image" options="{'size': [72, 100]}" string=""/>
+                        <field name="document"/>
+                        <field name="name"/>
+                        <field name="description" optional="show"/>
+                        <field name="tier" optional="hide"/>
+                        <field name="model" optional="hide"/>
+                        <field name="model_installed" column_invisible="1"/>
+                        <field name="template_id" string="In Odoo as"/>
+                        <button name="action_add" type="object" string="Add to Odoo" class="btn-primary"
+                                invisible="template_id" icon="fa-plus"/>
+                        <button name="action_add" type="object" string="Create Report" class="btn-secondary"
+                                invisible="not template_id or not model_installed" icon="fa-file-pdf-o"/>
+                    </tree>
+                </field>
+                <footer>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_gallery" model="ir.actions.server">
+        <field name="name">Designs for Odoo</field>
+        <field name="model_id" ref="model_pdfs_build_gallery"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open()</field>
+    </record>
+</odoo>

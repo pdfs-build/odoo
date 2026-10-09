@@ -335,6 +335,93 @@ class TestPdfsBuild(TransactionCase):
         self.assertIn('for line in record.order_line\n        if line.display_type not in ("line_section", "line_note")', skeleton)
         compile("{%s}" % skeleton, "<skeleton>", "eval")
 
+    def test_gallery_wizard_adds_a_design_and_its_report(self):
+        """Designs for Odoo: list with previews, add one, get a report on its model."""
+        from odoo.addons.pdfs_build.models import pdfs_build_gallery
+
+        listing = {
+            "templates": [
+                {"id": "odoo-invoice-stub-band", "name": "Odoo Invoice — Stub Band", "useCase": "odoo-invoice",
+                 "category": "odoo", "tier": "expressive", "description": "Band header."},
+                {"id": "odoo-delivery-slip-dock-ticket", "name": "Odoo Delivery Slip — Dock Ticket",
+                 "useCase": "odoo-delivery-slip", "category": "odoo", "tier": "expressive", "description": ""},
+            ],
+            "categories": [{"id": "odoo", "count": 2}],
+        }
+        png = Mock(status_code=200, ok=True, headers={"Content-Type": "image/png"}, content=b"\x89PNG")
+        names = {entry["id"]: entry["name"] for entry in listing["templates"]}
+        calls = []
+        added = {}  # what the organization holds after each from-gallery call
+
+        def fake_request(method, url, **kwargs):
+            path = url.split("/organizations/org_test/")[1]
+            calls.append((method, path, kwargs.get("data")))
+            if path == "gallery?category=odoo":
+                return response(200, listing)
+            if path.endswith("/preview"):
+                return png
+            if path == "templates/from-gallery":
+                gallery_id = json.loads(kwargs["data"])["galleryId"]
+                added[gallery_id] = {**LISTED, "externalId": gallery_id, "name": names[gallery_id],
+                                     "internalId": "aaaaaaaa-%s" % len(added)}
+                return response(201, {"id": added[gallery_id]["internalId"], "externalId": gallery_id,
+                                      "galleryId": gallery_id, "name": names[gallery_id],
+                                      "status": "published", "publishedVersion": 1})
+            if path == "templates":
+                return response(200, [LISTED, *added.values()])
+            if path.startswith("templates/"):
+                external_id = path[len("templates/"):].split("?")[0]
+                if external_id in added:
+                    return response(200, {**DETAIL, **added[external_id], "schema": self.ODOO_SCHEMA, "sampleData": {}})
+                return response(200, DETAIL)
+            raise AssertionError("unexpected call %s %s" % (method, url))
+
+        # The test database has no account app; map the invoice to a model it does have.
+        with patch.dict(pdfs_build_gallery.USE_CASE_MODELS, {"odoo-invoice": "res.partner"}):
+            with patch(REQUEST, side_effect=fake_request):
+                action = self.env["pdfs_build.gallery"].action_open()
+                wizard = self.env["pdfs_build.gallery"].browse(action["res_id"])
+                self.assertEqual(wizard.line_ids.mapped("gallery_id"), ["odoo-invoice-stub-band", "odoo-delivery-slip-dock-ticket"])
+                invoice, slip = wizard.line_ids
+                self.assertEqual(invoice.document, "Invoice")
+                self.assertEqual(invoice.model, "res.partner")
+                self.assertTrue(invoice.model_installed)
+                self.assertEqual(invoice.thumbnail, base64.b64encode(b"\x89PNG"))
+                self.assertFalse(invoice.template_id)
+                self.assertEqual(slip.model, "stock.picking")
+                self.assertFalse(slip.model_installed)
+                # Previews are fetched once per design.
+                self.assertEqual(len([c for c in calls if c[1].endswith("/preview")]), 2)
+
+                opened = invoice.action_add()
+        posted = [c for c in calls if c[1] == "templates/from-gallery"]
+        self.assertEqual(len(posted), 1)
+        self.assertEqual(json.loads(posted[0][2]), {"galleryId": "odoo-invoice-stub-band",
+                                                     "externalId": "odoo-invoice-stub-band",
+                                                     "name": "Odoo Invoice — Stub Band"})
+        template = self.Template.search([("external_id", "=", "odoo-invoice-stub-band")])
+        self.assertTrue(template)
+        self.assertEqual(invoice.template_id, template)
+        report = self.env["ir.actions.report"].browse(opened["res_id"])
+        self.assertEqual(report.model, "res.partner")
+        self.assertEqual(report.pdfs_build_template_id, template)
+        self.assertNotIn("TODO", report.pdfs_build_data_expr)
+        self.assertIn('"name": record.name,', report.pdfs_build_data_expr)
+        self.assertTrue(report.binding_model_id)
+
+        # Adding it again neither re-posts nor duplicates the report.
+        with patch.dict(pdfs_build_gallery.USE_CASE_MODELS, {"odoo-invoice": "res.partner"}):
+            with patch(REQUEST, side_effect=fake_request):
+                again = invoice.action_add()
+        self.assertEqual(again["res_id"], report.id)
+        self.assertEqual(len([c for c in calls if c[1] == "templates/from-gallery"]), 1)
+
+        # A design whose app is not installed is added and synced, with a notice.
+        with patch(REQUEST, side_effect=fake_request):
+            notice = slip.action_add()
+        self.assertEqual(notice["tag"], "display_notification")
+        self.assertIn("stock.picking", notice["params"]["message"])
+
     def test_tax_groups_reads_both_shapes(self):
         currency = self.env.ref("base.USD")
         money = lambda amount: format_amount(self.env, amount, currency)
