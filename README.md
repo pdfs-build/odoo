@@ -17,8 +17,11 @@ The module's own documentation is in [`pdfs_build/README.md`](pdfs_build/README.
 
 Templates whose fields are named after Odoo's own (the gallery's
 [Odoo category](https://pdfs.build/templates/odoo-invoice/)) need no data
-expression at all: choosing the model writes it. The contract those templates
-follow lives in the pdfs.build repository under `showcase/odoo/README.md`.
+expression at all: choosing the model writes it. **Designs for Odoo** in the
+module lists those designs with previews and adds one in a click — copied into
+the organization over the API, synced, and its report created. The contract
+those templates follow lives in the pdfs.build repository under
+`showcase/odoo/README.md`.
 
 ## Tests
 
