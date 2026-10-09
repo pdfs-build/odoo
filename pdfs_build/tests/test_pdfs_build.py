@@ -340,10 +340,10 @@ class TestPdfsBuild(TransactionCase):
 
         listing = {
             "templates": [
-                {"id": "odoo-invoice-stub-band", "name": "Odoo Invoice — Stub Band", "useCase": "odoo-invoice",
-                 "category": "odoo", "tier": "expressive", "description": "Band header."},
                 {"id": "odoo-delivery-slip-dock-ticket", "name": "Odoo Delivery Slip — Dock Ticket",
                  "useCase": "odoo-delivery-slip", "category": "odoo", "tier": "expressive", "description": ""},
+                {"id": "odoo-invoice-stub-band", "name": "Odoo Invoice — Stub Band", "useCase": "odoo-invoice",
+                 "category": "odoo", "tier": "expressive", "description": "Band header."},
             ],
             "categories": [{"id": "odoo", "count": 2}],
         }
@@ -383,6 +383,7 @@ class TestPdfsBuild(TransactionCase):
                 self.assertEqual(wizard.line_ids.mapped("gallery_id"), ["odoo-invoice-stub-band", "odoo-delivery-slip-dock-ticket"])
                 invoice, slip = wizard.line_ids
                 self.assertEqual(invoice.document, "Invoice")
+                self.assertEqual(invoice.design, "Stub Band")
                 self.assertEqual(invoice.model, "res.partner")
                 self.assertTrue(invoice.model_installed)
                 self.assertEqual(invoice.thumbnail, base64.b64encode(b"\x89PNG"))

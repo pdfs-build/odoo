@@ -12,6 +12,8 @@ USE_CASE_MODELS = {
     "odoo-delivery-slip": "stock.picking",
 }
 GALLERY_CATEGORY = "odoo"
+# The order a business meets the documents in, not the alphabet's.
+USE_CASE_SEQUENCE = {"odoo-invoice": 10, "odoo-quotation": 20, "odoo-purchase-order": 30, "odoo-delivery-slip": 40}
 
 
 class PdfsBuildGallery(models.TransientModel):
@@ -57,9 +59,13 @@ class PdfsBuildGallery(models.TransientModel):
         for entry in listing.get("templates", []):
             use_case = entry.get("useCase") or ""
             model = USE_CASE_MODELS.get(use_case, "")
+            name = entry.get("name") or entry.get("id")
             lines.append({
+                "sequence": USE_CASE_SEQUENCE.get(use_case, 90),
                 "gallery_id": entry.get("id"),
-                "name": entry.get("name") or entry.get("id"),
+                "name": name,
+                # "Odoo Invoice — Stub Band" is the template's name; the design is "Stub Band".
+                "design": name.split(" — ")[-1] if " — " in name else name,
                 "use_case": use_case,
                 "document": self._document_label(use_case),
                 "description": entry.get("description") or "",
@@ -69,7 +75,9 @@ class PdfsBuildGallery(models.TransientModel):
                 "template_id": added.get(entry.get("id"), False),
                 "thumbnail": self._thumbnail(entry.get("id"), settings),
             })
-        return lines
+        # Sorted here as well as by _order: a record created in this transaction
+        # keeps its lines in creation order until the cache is reloaded.
+        return sorted(lines, key=lambda line: (line["sequence"], line["name"]))
 
     @api.model
     def _document_label(self, use_case):
@@ -95,11 +103,13 @@ class PdfsBuildGallery(models.TransientModel):
 class PdfsBuildGalleryLine(models.TransientModel):
     _name = "pdfs_build.gallery.line"
     _description = "pdfs.build Design for Odoo"
-    _order = "use_case, name"
+    _order = "sequence, name"
 
     wizard_id = fields.Many2one("pdfs_build.gallery", required=True, ondelete="cascade")
+    sequence = fields.Integer(default=90)
     gallery_id = fields.Char(string="Design ID", required=True)
     name = fields.Char(required=True)
+    design = fields.Char()
     use_case = fields.Char()
     document = fields.Char(string="Document")
     description = fields.Text()

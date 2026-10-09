@@ -14,7 +14,8 @@
                     <list create="0" delete="0" editable="bottom" no_open="1">
                         <field name="thumbnail" widget="image" options="{'size': [72, 100]}" string=""/>
                         <field name="document"/>
-                        <field name="name"/>
+                        <field name="design"/>
+                        <field name="name" column_invisible="1"/>
                         <field name="description" optional="show"/>
                         <field name="tier" optional="hide"/>
                         <field name="model" optional="hide"/>
