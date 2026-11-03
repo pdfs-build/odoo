@@ -46,6 +46,8 @@
                             <field name="print_report_name" string="PDF File Name"
                                    placeholder="'%s - Quotation' % object.display_name"/>
                             <field name="pdfs_build_version" placeholder="latest"/>
+                            <field name="pdfs_build_has_qweb" invisible="1"/>
+                            <field name="pdfs_build_fallback" invisible="not pdfs_build_has_qweb"/>
                             <field name="pdfs_build_preview_record_id" widget="many2one_reference"
                                    options="{'no_create': True}" placeholder="Latest record"/>
                             <field name="report_name" string="Technical Name"/>
@@ -85,12 +87,17 @@
                             </field>
                         </page>
                         <page string="Help" name="help">
+                            <p>
+                                Each record is printed in its partner's language, as Odoo prints its own documents
+                                (the customer of an invoice or an order): translated fields, dates and amounts follow
+                                it. Records without a partner use the language of the user printing.
+                            </p>
                             <h5>Variables</h5>
                             <ul>
                                 <li><code>record</code> (also <code>object</code>): the record being printed</li>
                                 <li><code>env</code>, <code>user</code>, <code>company</code>: the environment, the current user and company</li>
                                 <li><code>datetime</code>, <code>dateutil</code>, <code>relativedelta</code>, <code>time</code>: date helpers</li>
-                                <li><code>format_date(value)</code>, <code>format_datetime(value)</code>: in the user's language and format</li>
+                                <li><code>format_date(value)</code>, <code>format_datetime(value)</code>: in the record's language and format</li>
                                 <li><code>format_amount(amount, currency)</code>: an amount with its currency symbol, e.g. <code>format_amount(record.amount_total, record.currency_id)</code></li>
                                 <li><code>image(binary)</code>: an image or binary field as the data URL image fields expect, e.g. <code>image(record.company_id.logo)</code></li>
                                 <li><code>html2plaintext(html)</code>: plain text from an HTML field such as notes</li>
