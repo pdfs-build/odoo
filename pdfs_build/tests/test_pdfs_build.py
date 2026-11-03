@@ -1,6 +1,7 @@
 import base64
 import io
 import json
+import threading
 from datetime import date
 from unittest.mock import Mock, patch
 
@@ -78,14 +79,23 @@ def blank_pdf(pages=1):
 
 def api(pdfs=(), detail=DETAIL, render=None, version=None):
     """A requests.request stand-in: template GETs answer ``detail`` (with ``version``
-    when given), renders answer ``render`` or the next of ``pdfs`` in turn."""
-    pdfs = list(pdfs)
+    when given), renders answer ``render`` or the next of ``pdfs`` in turn. ``pdfs``
+    may instead map a clientName to its PDF: renders of one job run in parallel,
+    so their order is not the records' order."""
+    by_client = pdfs if isinstance(pdfs, dict) else None
+    pdfs = list(pdfs) if by_client is None else []
+    lock = threading.Lock()
 
     def fake(method, url, **kwargs):
         if method == "GET" and "/templates/odoo-quotation" in url:
             return response(200, {**detail, "version": version})
         if method == "POST" and url.endswith("/render"):
-            return render or response(200, pdf=pdfs.pop(0))
+            if render:
+                return render
+            if by_client is not None:
+                return response(200, pdf=by_client[json.loads(kwargs["data"])["data"]["clientName"]])
+            with lock:
+                return response(200, pdf=pdfs.pop(0))
         return response(404, {"error": "Template not found"})
 
     return fake
@@ -692,7 +702,8 @@ class TestPdfsBuild(TransactionCase):
         report = self._report('{"clientName": record.name}', attachment="'quote-%s.pdf' % object.name")
         other = self.env["res.partner"].create({"name": "Globex"})
         two_pages, one_page = blank_pdf(2), blank_pdf(1)
-        with patch(REQUEST, side_effect=api(pdfs=[two_pages, one_page])):
+        pdfs = {"Acme Corp": two_pages, "Globex": one_page}
+        with patch(REQUEST, side_effect=api(pdfs=pdfs)):
             streams = self.Report._render_qweb_pdf_prepare_streams(
                 "pdfs_build.odoo_quotation", {}, res_ids=[self.partner.id, other.id]
             )
@@ -700,7 +711,7 @@ class TestPdfsBuild(TransactionCase):
         self.assertEqual(PdfFileReader(streams[self.partner.id]["stream"]).getNumPages(), 2)
         self.assertEqual(PdfFileReader(streams[other.id]["stream"]).getNumPages(), 1)
 
-        with patch(REQUEST, side_effect=api(pdfs=[two_pages, one_page])):
+        with patch(REQUEST, side_effect=api(pdfs=pdfs)):
             content, _kind = self.Report.with_context(force_report_rendering=True)._render_qweb_pdf(
                 "pdfs_build.odoo_quotation", res_ids=[self.partner.id, other.id]
             )
@@ -762,7 +773,7 @@ class TestPdfsBuild(TransactionCase):
                 report._pdfs_build_render(self.partner)
         plan = {"error": "api_renders_not_allowed_on_free", "message": "REST API renders are not available on the Free plan."}
         with patch(REQUEST, side_effect=api(render=response(402, plan))):
-            with self.assertRaisesRegex(UserError, "Starter plan"):
+            with self.assertRaisesRegex(UserError, "needs an active pdfs.build plan"):
                 report._pdfs_build_render(self.partner)
         compilation = {"error": "Compilation failed", "diagnostics": [{"line": 12, "message": "unknown variable"}]}
         with patch(REQUEST, side_effect=api(render=response(422, compilation))):
@@ -886,3 +897,79 @@ class TestPdfsBuild(TransactionCase):
         self.assertEqual(request.call_args.kwargs["headers"]["Authorization"], "Bearer prs_new")
         self.assertEqual(self.Template._api_settings()["api_key"], "prs_new")
         self.assertEqual(self.Template._api_settings()["url"], "https://api.pdfs.build")
+
+    def test_records_print_in_their_partners_language(self):
+        self.env["res.lang"]._activate_lang("fr_FR")
+        report = self._report('{"clientName": env.lang + "/" + record.env.lang, "items": []}')
+        self.partner.lang = "fr_FR"
+        self.assertEqual(report._pdfs_build_data(self.partner)["clientName"], "fr_FR/fr_FR")
+        self.partner.lang = False
+        lang = self.env.user.lang
+        self.assertEqual(report._pdfs_build_data(self.partner)["clientName"], "%s/%s" % (lang, lang))
+
+    def test_a_batch_resolves_the_version_once_and_renders_every_record(self):
+        report = self._report('{"clientName": record.name, "items": []}')
+        partners = self.partner | self.env["res.partner"].create([{"name": "Globex"}, {"name": "Initech"}])
+        pdfs = {name: blank_pdf(pages) for name, pages in (("Acme Corp", 1), ("Globex", 2), ("Initech", 3))}
+        with patch(REQUEST, side_effect=api(pdfs=pdfs, version=6)) as request:
+            streams = self.Report._render_qweb_pdf_prepare_streams(
+                "pdfs_build.odoo_quotation", {}, res_ids=partners.ids
+            )
+        methods = [c.args[0] for c in request.call_args_list]
+        self.assertEqual(methods.count("GET"), 1, "the channel is resolved once for the job")
+        self.assertEqual(methods.count("POST"), 3)
+        self.assertEqual({body["version"] for body in posted(request)}, {6})
+        self.assertEqual(list(streams), partners.ids, "print order kept")
+        for partner in partners:
+            self.assertEqual(streams[partner.id]["stream"].getvalue(), pdfs[partner.name])
+        self.assertEqual(report.id, self.Report._get_report("pdfs_build.odoo_quotation").id)
+
+    def test_taken_over_reports_fall_back_to_odoos_layout(self):
+        from odoo.addons.base.models.ir_actions_report import IrActionsReport as Base
+
+        self.env["ir.ui.view"].create(
+            {
+                "name": "test.contact_card",
+                "type": "qweb",
+                "key": "test.contact_card",
+                "arch": '<t t-name="test.contact_card"><html><body><main><t t-foreach="docs" t-as="o">'
+                '<div class="article" t-att-data-oe-model="o._name" t-att-data-oe-id="o.id">'
+                '<p t-out="o.name"/></div></t></main></body></html></t>',
+            }
+        )
+        report = self._report('{"clientName": record.name, "items": []}', report_name="test.contact_card")
+        self.assertTrue(report.pdfs_build_has_qweb)
+        self.assertTrue(report.pdfs_build_fallback)
+        qweb_pdf = blank_pdf(4)
+
+        def odoo_prints(**fakes):
+            return (
+                patch(REQUEST, **fakes),
+                patch.object(Base, "_run_wkhtmltopdf", return_value=qweb_pdf),
+                patch.object(Base, "get_wkhtmltopdf_state", return_value="ok"),
+            )
+
+        def print_card():
+            return self.Report._render_qweb_pdf_prepare_streams("test.contact_card", {}, res_ids=self.partner.ids)
+
+        for fakes in (
+            {"side_effect": requests.ConnectionError("no route")},
+            {"side_effect": api(render=response(402, {"error": "Payment required"}))},
+            {"side_effect": api(render=response(503, {"error": "Unavailable"}))},
+        ):
+            first, second, third = odoo_prints(**fakes)
+            with first, second, third:
+                streams = print_card()
+            self.assertEqual(streams[self.partner.id]["stream"].getvalue(), qweb_pdf, fakes)
+
+        first, second, third = odoo_prints(side_effect=api(render=response(400, {"error": "Validation failed"})))
+        with first, second, third, self.assertRaisesRegex(UserError, "Validation failed"):
+            print_card()
+
+        report.pdfs_build_fallback = False
+        first, second, third = odoo_prints(side_effect=requests.ConnectionError("no route"))
+        with first, second, third, self.assertRaisesRegex(UserError, "Could not reach pdfs.build"):
+            print_card()
+
+        plain = self._report('{"clientName": record.name}', report_name="pdfs_build.no_layout")
+        self.assertFalse(plain.pdfs_build_has_qweb, "a report of its own has no layout to fall back to")

@@ -12,7 +12,7 @@
                         <!-- One box, labelled rows, full-width inputs: an organization ID is 32
                              characters and a key 50, and the default half-width field clips both. -->
                         <setting id="pdfs_build_connection_setting" string="pdfs.build account"
-                                 help="Both come from Developers &gt; API keys in the pdfs.build app: the key is shown once when created, the Organization ID at the top of the page and must be the organization the key belongs to. Rendering over the API needs the Starter plan or higher.">
+                                 help="Both come from Developers &gt; API keys in the pdfs.build app: the key is shown once when created, the Organization ID at the top of the page and must be the organization the key belongs to. New accounts start with a 7-day free trial that includes the API.">
                             <div class="content-group">
                                 <div class="row mt16">
                                     <label for="pdfs_build_api_key" class="col-lg-3 o_light_label"/>

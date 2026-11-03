@@ -11,8 +11,35 @@ from odoo.exceptions import UserError
 
 DEFAULT_API_URL = "https://api.pdfs.build"
 APP_URL = "https://app.pdfs.build"
+# The service cannot render right now: unreachable, out of plan or quota, or failing.
+UNAVAILABLE_STATUSES = {402, 429, 500, 502, 503, 504}
 # Placeholder the skeleton uses for line items; replaced once the model is known.
 LINES_PLACEHOLDER = "record.line_ids  # TODO: the lines field, e.g. order_line"
+
+
+class PdfsBuildUnavailable(UserError):
+    """pdfs.build cannot render right now. Reports that replace one of Odoo's own
+    can fall back to Odoo's layout on this error, and only on this one."""
+
+
+def send(settings, method, path, json_body=None, timeout=30):
+    """The HTTP request alone: no environment, so it is safe in a worker thread.
+
+    Returns the response, or the RequestException that prevented one.
+    """
+    url = "%s/v2/organizations/%s/%s" % (settings["url"], quote(settings["organization_id"], safe=""), path)
+    headers = {
+        "Authorization": "Bearer %s" % settings["api_key"],
+        "Accept": "application/pdf, image/png, application/json",
+    }
+    data = None
+    if json_body is not None:
+        headers["Content-Type"] = "application/json"
+        data = json.dumps(json_body).encode()
+    try:
+        return requests.request(method, url, headers=headers, data=data, timeout=timeout)
+    except requests.RequestException as error:
+        return error
 
 
 class PdfsBuildTemplate(models.Model):
@@ -114,35 +141,30 @@ class PdfsBuildTemplate(models.Model):
         """Call the pdfs.build v2 API under the organization of the settings.
 
         Returns the PDF bytes or the decoded JSON body. Any failure becomes a
-        UserError carrying the API's own error code, message and details.
+        UserError carrying the API's own error code, message and details;
+        PdfsBuildUnavailable when the service cannot render right now.
         """
         settings = settings or self._api_settings()
+        self._check_settings(settings)
+        return self._api_result(settings, send(settings, method, path, json_body=json_body, timeout=timeout))
+
+    @api.model
+    def _check_settings(self, settings):
         if not settings["api_key"] or not settings["organization_id"]:
             raise UserError(
                 _(
                     "pdfs.build is not configured yet. Enter the API key and the "
-                    "Organization ID under Settings > pdfs.build."
+                    "Organization ID under pdfs.build > Settings."
                 )
             )
-        url = "%s/v2/organizations/%s/%s" % (
-            settings["url"],
-            quote(settings["organization_id"], safe=""),
-            path,
-        )
-        headers = {
-            "Authorization": "Bearer %s" % settings["api_key"],
-            "Accept": "application/pdf, image/png, application/json",
-        }
-        data = None
-        if json_body is not None:
-            headers["Content-Type"] = "application/json"
-            data = json.dumps(json_body).encode()
-        try:
-            response = requests.request(method, url, headers=headers, data=data, timeout=timeout)
-        except requests.RequestException as error:
-            raise UserError(
-                _("Could not reach pdfs.build at %(url)s: %(error)s", url=settings["url"], error=error)
-            ) from error
+
+    @api.model
+    def _api_result(self, settings, response):
+        """What ``send`` returned, as the body, the PDF, or a UserError."""
+        if isinstance(response, requests.RequestException):
+            raise PdfsBuildUnavailable(
+                _("Could not reach pdfs.build at %(url)s: %(error)s", url=settings["url"], error=response)
+            ) from response
         content_type = response.headers.get("Content-Type", "")
         if response.ok and not content_type.startswith("application/json"):
             return response.content  # a PDF, or a preview image
@@ -151,16 +173,21 @@ class PdfsBuildTemplate(models.Model):
         except ValueError:
             body = {"error": (response.text or "")[:200] or "HTTP %s" % response.status_code}
         if not response.ok:
-            raise UserError(self._api_error_message(response.status_code, body))
+            error = PdfsBuildUnavailable if response.status_code in UNAVAILABLE_STATUSES else UserError
+            raise error(self._api_error_message(response.status_code, body))
         return body
 
     @api.model
     def _status_hint(self, status):
         return {
-            401: _("Check the API key under Settings > pdfs.build."),
-            402: _("Rendering over the API needs a pdfs.build Starter plan or higher."),
+            401: _("Check the API key under pdfs.build > Settings."),
+            402: _(
+                "Rendering over the API needs an active pdfs.build plan. Choose one in the "
+                "pdfs.build app: %s",
+                APP_URL,
+            ),
             403: _(
-                "Check that the Organization ID under Settings > pdfs.build belongs to the "
+                "Check that the Organization ID under pdfs.build > Settings belongs to the "
                 "API key, and that the template is published."
             ),
             404: _("The template is not published or its ID changed. Sync the templates."),
