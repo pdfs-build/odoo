@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 19.0-20261102\n"
+"Project-Id-Version: Odoo Server 17.0-20260908\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 09:24+0000\n"
-"PO-Revision-Date: 2026-11-03 09:24+0000\n"
+"POT-Creation-Date: 2026-11-03 10:02+0000\n"
+"PO-Revision-Date: 2026-11-03 10:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,6 +18,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid ""
 "%(count)s published template(s). Archive the ones you do not print from "
 "Odoo."
@@ -26,6 +27,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+#, python-format
 msgid ""
 "%(name)s is in your pdfs.build organization and synced. Install the app that"
 " provides %(model)s to print it from Odoo."
@@ -34,30 +36,35 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid "%s (sample data)"
 msgstr ""
 
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/ir_actions_report.py:0
+#, python-format
 msgid "%s is rendered by pdfs.build. Print it to get the PDF."
 msgstr ""
 
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/res_config_settings.py:0
+#, python-format
 msgid "%s published template(s) in this organization."
 msgstr ""
 
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+#, python-format
 msgid "%s was added on pdfs.build but did not come back in the sync."
 msgstr ""
 
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/ir_actions_report.py:0
+#, python-format
 msgid "%s: %s"
 msgstr ""
 
@@ -205,6 +212,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/ir_actions_report.py:0
+#, python-format
 msgid "Another report already uses the technical name %s. Choose another one."
 msgstr ""
 
@@ -232,6 +240,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid ""
 "Check that the Organization ID under pdfs.build > Settings belongs to the "
 "API key, and that the template is published."
@@ -240,6 +249,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid "Check the API key under pdfs.build > Settings."
 msgstr ""
 
@@ -265,6 +275,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/res_config_settings.py:0
+#, python-format
 msgid "Connected to pdfs.build"
 msgstr ""
 
@@ -276,6 +287,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid "Could not reach pdfs.build at %(url)s: %(error)s"
 msgstr ""
 
@@ -329,12 +341,14 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/ir_actions_report.py:0
+#, python-format
 msgid "Data for %(record)s, template version %(version)s"
 msgstr ""
 
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+#, python-format
 msgid "Delivery Slip"
 msgstr ""
 
@@ -357,6 +371,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+#, python-format
 msgid "Design added"
 msgstr ""
 
@@ -379,15 +394,14 @@ msgstr ""
 #: model:ir.actions.server,name:pdfs_build.action_gallery
 #: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
 #: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_list
+#, python-format
 msgid "Designs for Odoo"
 msgstr ""
 
 #. module: pdfs_build
-#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__display_name
 #: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery__display_name
 #: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__display_name
 #: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__display_name
-#: model:ir.model.fields,field_description:pdfs_build.field_res_config_settings__display_name
 msgid "Display Name"
 msgstr ""
 
@@ -468,11 +482,9 @@ msgid "Help"
 msgstr ""
 
 #. module: pdfs_build
-#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__id
 #: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery__id
 #: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__id
 #: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__id
-#: model:ir.model.fields,field_description:pdfs_build.field_res_config_settings__id
 msgid "ID"
 msgstr ""
 
@@ -509,6 +521,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+#, python-format
 msgid "Invoice"
 msgstr ""
 
@@ -566,6 +579,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
 #: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+#, python-format
 msgid "New Report"
 msgstr ""
 
@@ -606,6 +620,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/ir_actions_report.py:0
+#, python-format
 msgid "Open this list from a template's 'Use for Existing Report' button."
 msgstr ""
 
@@ -659,6 +674,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+#, python-format
 msgid "Purchase Order"
 msgstr ""
 
@@ -675,6 +691,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+#, python-format
 msgid "Quotation / Sales Order"
 msgstr ""
 
@@ -713,6 +730,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid ""
 "Rendering over the API needs an active pdfs.build plan. Choose one in the "
 "pdfs.build app: %s"
@@ -721,6 +739,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid "Replace an existing report with %s"
 msgstr ""
 
@@ -770,6 +789,8 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/ir_actions_report.py:0
+#: code:addons/pdfs_build/models/ir_actions_report.py:0
+#, python-format
 msgid "Select at least one record to print with %s."
 msgstr ""
 
@@ -857,6 +878,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid "Templates synced"
 msgstr ""
 
@@ -881,6 +903,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/ir_actions_report.py:0
+#, python-format
 msgid ""
 "The data expression of the report %(report)s failed for %(record)s:\n"
 "%(error)s"
@@ -889,6 +912,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/ir_actions_report.py:0
+#, python-format
 msgid ""
 "The data expression of the report %s must return a dict, the JSON object the"
 " template expects."
@@ -897,6 +921,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/ir_actions_report.py:0
+#, python-format
 msgid ""
 "The data expression returns the record(s) %s. Send one of their fields "
 "instead (for example .name), or a list comprehension for lines."
@@ -919,6 +944,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid "The organization's monthly render quota is used up."
 msgstr ""
 
@@ -932,6 +958,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/ir_actions_report.py:0
+#, python-format
 msgid ""
 "The report %s has no data expression. Fill it in under pdfs.build > Reports."
 msgstr ""
@@ -944,6 +971,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid "The sample data of %s is not valid JSON."
 msgstr ""
 
@@ -962,12 +990,14 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid "The template is not published or its ID changed. Sync the templates."
 msgstr ""
 
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/ir_actions_report.py:0
+#, python-format
 msgid "There is no %s record yet to try the report with."
 msgstr ""
 
@@ -994,6 +1024,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid "Unexpected answer from pdfs.build when listing templates."
 msgstr ""
 
@@ -1061,6 +1092,7 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid "draft"
 msgstr ""
 
@@ -1121,12 +1153,14 @@ msgstr ""
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid "pdfs.build answered %(status)s: %(error)s"
 msgstr ""
 
 #. module: pdfs_build
 #. odoo-python
 #: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#, python-format
 msgid ""
 "pdfs.build is not configured yet. Enter the API key and the Organization ID "
 "under pdfs.build > Settings."
