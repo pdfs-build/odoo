@@ -1,0 +1,1157 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* pdfs_build
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0-20261102\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-03 09:24+0000\n"
+"PO-Revision-Date: 2026-11-03 09:24+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid ""
+"%(count)s published template(s). Archive the ones you do not print from "
+"Odoo."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+msgid ""
+"%(name)s is in your pdfs.build organization and synced. Install the app that"
+" provides %(model)s to print it from Odoo."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid "%s (sample data)"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/ir_actions_report.py:0
+msgid "%s is rendered by pdfs.build. Print it to get the PDF."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/res_config_settings.py:0
+msgid "%s published template(s) in this organization."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+msgid "%s was added on pdfs.build but did not come back in the sync."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/ir_actions_report.py:0
+msgid "%s: %s"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "'%s - Quotation' % object.display_name"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "'%s.pdf' % object.name"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
+msgid "32 characters"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"<b>Preview Data</b> shows the exact data for the latest record; <b>Preview "
+"PDF</b> renders it. Errors from pdfs.build name the field or line concerned."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"<code>datetime</code>, <code>dateutil</code>, <code>relativedelta</code>, "
+"<code>time</code>: date helpers"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"<code>env</code>, <code>user</code>, <code>company</code>: the environment, "
+"the current user and company"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"<code>format_amount(amount, currency)</code>: an amount with its currency "
+"symbol, e.g. <code>format_amount(record.amount_total, "
+"record.currency_id)</code>"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"<code>format_date(value)</code>, <code>format_datetime(value)</code>: in the"
+" record's language and format"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"<code>html2plaintext(html)</code>: plain text from an HTML field such as "
+"notes"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"<code>image(binary)</code>: an image or binary field as the data URL image "
+"fields expect, e.g. <code>image(record.company_id.logo)</code>"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"<code>record</code> (also <code>object</code>): the record being printed"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"<code>tax_groups(record)</code>: the taxes of an invoice or order as a list "
+"of <code>{\"name\", \"base\", \"amount\"}</code>"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"<code>weight_uom_name</code>: the weight unit of the Inventory settings, "
+"\"kg\" or \"lb\""
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
+msgid ""
+"<i class=\"oi oi-arrow-right\"/> Open Developers &gt; API keys on pdfs.build"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "<span class=\"o_stat_text\">Add to the 'Print' menu</span>"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "<span class=\"o_stat_text\">Remove from the 'Print' menu</span>"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"A Python expression evaluated for each printed <code>record</code>; it returns the\n"
+"                                data the template expects. The <b>Template Fields</b> and <b>Odoo Fields</b> tabs list\n"
+"                                both sides; <b>Help</b> has a worked example."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.actions.act_window,help:pdfs_build.action_reports
+msgid ""
+"A report prints an Odoo model with a pdfs.build template. Create one here,\n"
+"                or from a template with <b>New Report</b>."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_res_config_settings__pdfs_build_api_key
+msgid "API Key"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__active
+msgid "Active"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid "Add a Print menu entry that renders an Odoo model with this template"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_gallery_form
+msgid "Add to Odoo"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Advanced"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/ir_actions_report.py:0
+msgid "Another report already uses the technical name %s. Choose another one."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,help:pdfs_build.field_pdfs_build_template__active
+msgid ""
+"Archive the templates you do not print from Odoo: they disappear from the "
+"pickers and the sync leaves them archived."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_search
+msgid "Archived"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
+msgid ""
+"Both come from Developers > API keys in the pdfs.build app: the key is shown"
+" once when created, the Organization ID at the top of the page and must be "
+"the organization the key belongs to. New accounts start with a 7-day free "
+"trial that includes the API."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid ""
+"Check that the Organization ID under pdfs.build > Settings belongs to the "
+"API key, and that the template is published."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid "Check the API key under pdfs.build > Settings."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
+msgid ""
+"Check the connection, then pull the published templates of your organization"
+" into Odoo."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_gallery_form
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_preview_form
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_preview_form
+msgid "Close"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model,name:pdfs_build.model_res_config_settings
+msgid "Config Settings"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/res_config_settings.py:0
+msgid "Connected to pdfs.build"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
+msgid "Connection"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid "Could not reach pdfs.build at %(url)s: %(error)s"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_gallery_form
+msgid "Create Report"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery__create_uid
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__create_uid
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery__create_date
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__create_date
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,help:pdfs_build.field_res_config_settings__pdfs_build_api_key
+msgid ""
+"Created under Developers > API keys in the pdfs.build app. It starts with "
+"prs_ and is shown once."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Data"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__pdfs_build_data_expr
+msgid "Data Expression"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__data_fields
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid "Data Fields"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__pdfs_build_preview
+msgid "Data Preview"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/ir_actions_report.py:0
+msgid "Data for %(record)s, template version %(version)s"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+msgid "Delivery Slip"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__description
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__description
+msgid "Description"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__design
+msgid "Design"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__gallery_id
+msgid "Design ID"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+msgid "Design added"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery__line_ids
+msgid "Designs"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_gallery_form
+msgid ""
+"Designs built for Odoo: their fields are Odoo's own, so adding one copies it into your\n"
+"                    pdfs.build organization, syncs it, and creates its report with the data expression\n"
+"                    already written. Replace Odoo's own report afterwards with <b>Use for Existing Report</b>."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+#: model:ir.actions.server,name:pdfs_build.action_gallery
+#: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_list
+msgid "Designs for Odoo"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__display_name
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery__display_name
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__display_name
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__display_name
+#: model:ir.model.fields,field_description:pdfs_build.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__document
+msgid "Document"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields.selection,name:pdfs_build.selection__pdfs_build_template__status__draft
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_search
+msgid "Draft"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"Each record is printed in its partner's language, as Odoo prints its own documents\n"
+"                                (the customer of an invoice or an order): translated fields, dates and amounts follow\n"
+"                                it. Records without a partner use the language of the user printing."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"Empty Odoo fields are <code>False</code>; they are sent as "
+"<code>\"\"</code>, <code>0</code> or <code>[]</code> according to the "
+"template's schema, and dates as ISO strings."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,help:pdfs_build.field_ir_actions_report__pdfs_build_version
+msgid ""
+"Empty renders the latest promoted version. Otherwise a version number (4), "
+"'draft', or a channel name such as 'staging'."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.actions.act_window,help:pdfs_build.action_templates
+msgid ""
+"Enter your API key under pdfs.build &gt; Settings, then click\n"
+"                <b>Sync Templates</b> to pull the published templates of your organization."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Example: a quotation from a Sales Order"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_pick_list
+msgid "Existing Reports"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__pdfs_build_fallback
+msgid "Fall Back to Odoo's Layout"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Field Name"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__schema_html
+msgid "Fields"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Good to know"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Help"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__id
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery__id
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__id
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__id
+#: model:ir.model.fields,field_description:pdfs_build.field_res_config_settings__id
+msgid "ID"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"Images stored with the template keep their sample value; images from Odoo go"
+" through <code>image(...)</code>."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__template_id
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_gallery_form
+msgid "In Odoo as"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_list
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_pick_list
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid "In Print Menu Of"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_pick_search
+msgid "In a Print Menu"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__internal_id
+msgid "Internal"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+msgid "Invoice"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__schema_json
+msgid "JSON Schema"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Label"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__last_synced
+msgid "Last Synced"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery__write_uid
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__write_uid
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery__write_date
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__write_date
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Latest record"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__model_id
+msgid "Model"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__model_installed
+msgid "Model Installed"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__name
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__name
+msgid "Name"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid "New Report"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.actions.act_window,help:pdfs_build.action_reports
+msgid "No reports yet"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.actions.act_window,help:pdfs_build.action_templates
+msgid "No templates yet"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__pdfs_build_model_field_ids
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Odoo Fields"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__model
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Odoo Model"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,help:pdfs_build.field_pdfs_build_template__status
+msgid ""
+"Only published templates can be rendered. A template that is no longer "
+"published on pdfs.build is marked Draft by the next sync."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid "Open in pdfs.build"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/ir_actions_report.py:0
+msgid "Open this list from a template's 'Use for Existing Report' button."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_res_config_settings__pdfs_build_organization_id
+msgid "Organization ID"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "PDF File Name"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__pdfs_build_has_qweb
+msgid "Pdfs Build Has Qweb"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_preview_form
+msgid "Preview"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Preview Data"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__pdfs_build_preview_pdf
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Preview PDF"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__pdfs_build_preview_record_id
+msgid "Preview Record"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid "Preview Sample PDF"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields.selection,name:pdfs_build.selection__pdfs_build_template__status__published
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_search
+msgid "Published"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+msgid "Purchase Order"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,help:pdfs_build.field_ir_actions_report__pdfs_build_data_expr
+msgid ""
+"Python expression evaluated for each printed record. It must return the dict"
+" the template expects. Available: record, env, user, company, datetime, "
+"dateutil, relativedelta, time, image(binary), html2plaintext(html), "
+"format_date(value), format_datetime(value), format_amount(amount, currency),"
+" tax_groups(record), weight_uom_name."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_gallery.py:0
+msgid "Quotation / Sales Order"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid "Refresh"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Related Model"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid "Reload the template's schema and sample data from pdfs.build"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid ""
+"Render one of Odoo's own reports (Invoices, Quotation / Order...) with this "
+"template instead of its QWeb layout"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Render the latest record of the model and show the PDF"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid "Render the template with its sample data"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid ""
+"Rendering over the API needs an active pdfs.build plan. Choose one in the "
+"pdfs.build app: %s"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid "Replace an existing report with %s"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__report_ids
+msgid "Report"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model,name:pdfs_build.model_ir_actions_report
+msgid "Report Action"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__report_count
+msgid "Report Count"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.actions.act_window,name:pdfs_build.action_reports
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__report_ids
+#: model:ir.ui.menu,name:pdfs_build.menu_reports
+#: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_pick_search
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_list
+msgid "Reports"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__sample_data_json
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid "Sample Data"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__preview_pdf
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_preview_form
+msgid "Sample PDF"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid "Schema (JSON)"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/ir_actions_report.py:0
+msgid "Select at least one record to print with %s."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"Send fields of related records, not the records themselves: "
+"<code>record.partner_id.name</code>, not <code>record.partner_id</code>."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.actions.act_window,name:pdfs_build.action_settings
+#: model:ir.ui.menu,name:pdfs_build.menu_settings
+msgid "Settings"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Show the data the latest record would send"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,help:pdfs_build.field_res_config_settings__pdfs_build_organization_id
+msgid ""
+"Shown at the top of Developers > API keys. It must be the organization the "
+"API key belongs to."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Shown in the Print menu as"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__status
+msgid "Status"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
+msgid "Sync"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_list
+msgid "Sync Templates"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_pick_list
+msgid "Technical Name"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__pdfs_build_schema_html
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Template Fields"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_template__external_id
+msgid "Template ID"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__pdfs_build_version
+msgid "Template Version"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.actions.act_window,name:pdfs_build.action_templates
+#: model:ir.ui.menu,name:pdfs_build.menu_templates
+#: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_search
+msgid "Templates"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid "Templates synced"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Templates that fill themselves in"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
+msgid "Test Connection"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid ""
+"The data a report sends to this template. A report's data expression\n"
+"                                returns one value per field; <code>items[].name</code> means each entry\n"
+"                                of the <code>items</code> list has a <code>name</code>."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/ir_actions_report.py:0
+msgid ""
+"The data expression of the report %(report)s failed for %(record)s:\n"
+"%(error)s"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/ir_actions_report.py:0
+msgid ""
+"The data expression of the report %s must return a dict, the JSON object the"
+" template expects."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/ir_actions_report.py:0
+msgid ""
+"The data expression returns the record(s) %s. Send one of their fields "
+"instead (for example .name), or a list comprehension for lines."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"The fields of the chosen model: use <code>record.&lt;Field Name&gt;</code> in the\n"
+"                                expression. Relations give another record, for example\n"
+"                                <code>record.partner_id.email</code>; one2many fields are lists to loop over."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,help:pdfs_build.field_ir_actions_report__pdfs_build_model_field_ids
+msgid ""
+"The fields of the model, to use as record.<field> in the data expression."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid "The organization's monthly render quota is used up."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,help:pdfs_build.field_ir_actions_report__pdfs_build_preview_record_id
+msgid ""
+"The record Preview Data and Preview PDF use. Empty: the latest record of the"
+" model."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/ir_actions_report.py:0
+msgid ""
+"The report %s has no data expression. Fill it in under pdfs.build > Reports."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,help:pdfs_build.field_ir_actions_report__pdfs_build_has_qweb
+msgid "The report has an Odoo layout of its own (a QWeb view named after it)."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid "The sample data of %s is not valid JSON."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,help:pdfs_build.field_ir_actions_report__pdfs_build_schema_json
+msgid ""
+"The schema of the pinned Template Version, fetched from pdfs.build. Empty "
+"when the report renders the latest version: the template's schema applies."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,help:pdfs_build.field_pdfs_build_template__external_id
+msgid "The template ID shown in the pdfs.build app."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid "The template is not published or its ID changed. Sync the templates."
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/ir_actions_report.py:0
+msgid "There is no %s record yet to try the report with."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.constraint,message:pdfs_build.constraint_pdfs_build_template_external_id_unique
+msgid "This pdfs.build template is already synced."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__thumbnail
+msgid "Thumbnail"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__tier
+msgid "Tier"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Type"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid "Unexpected answer from pdfs.build when listing templates."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__use_case
+msgid "Use Case"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_pick_list
+msgid "Use Template"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid "Use for Existing Report"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "Variables"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__pdfs_build_schema_json
+msgid "Version Schema"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"What the template expects. <code>items[].name</code> means each entry of the\n"
+"                                <code>items</code> list has a <code>name</code>."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"When a template's fields are named after Odoo's own (<code>partner_id</code>,\n"
+"                                <code>invoice_line_ids</code>, <code>amount_total</code>…), choosing the model writes the\n"
+"                                whole expression: every matching field is read automatically, nested records and lines\n"
+"                                included, and only the fields Odoo does not have are left as <code>TODO</code>. The\n"
+"                                <b>Odoo</b> category of the pdfs.build template gallery is built this way."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,help:pdfs_build.field_ir_actions_report__pdfs_build_fallback
+msgid ""
+"When pdfs.build cannot render (unreachable, a server error, or the plan or "
+"monthly quota used up), print with Odoo's own layout instead of failing. "
+"Only for reports that replace one of Odoo's own, which have a layout to fall"
+" back to."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,help:pdfs_build.field_ir_actions_report__pdfs_build_template_id
+msgid "When set, this report is rendered by pdfs.build instead of QWeb."
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model.fields,field_description:pdfs_build.field_pdfs_build_gallery_line__wizard_id
+msgid "Wizard"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid "draft"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "e.g. Quotation"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "latest"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.ui.menu,name:pdfs_build.menu_root
+#: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form_inherit
+msgid "pdfs.build"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model,name:pdfs_build.model_pdfs_build_gallery_line
+msgid "pdfs.build Design for Odoo"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model,name:pdfs_build.model_pdfs_build_gallery
+msgid "pdfs.build Designs for Odoo"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid "pdfs.build Report"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_list
+msgid "pdfs.build Reports"
+msgstr ""
+
+#. module: pdfs_build
+#: model:ir.model,name:pdfs_build.model_pdfs_build_template
+#: model:ir.model.fields,field_description:pdfs_build.field_ir_actions_report__pdfs_build_template_id
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_form
+msgid "pdfs.build Template"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_template_list
+msgid "pdfs.build Templates"
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
+msgid "pdfs.build account"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid "pdfs.build answered %(status)s: %(error)s"
+msgstr ""
+
+#. module: pdfs_build
+#. odoo-python
+#: code:addons/pdfs_build/models/pdfs_build_template.py:0
+msgid ""
+"pdfs.build is not configured yet. Enter the API key and the Organization ID "
+"under pdfs.build > Settings."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.res_config_settings_view_form
+msgid "prs_..."
+msgstr ""
+
+#. module: pdfs_build
+#: model_terms:ir.ui.view,arch_db:pdfs_build.view_report_form
+msgid ""
+"{\n"
+"    \"quoteNumber\": record.name,\n"
+"    \"issueDate\": format_date(record.date_order),\n"
+"    \"clientName\": record.partner_id.commercial_partner_id.name,\n"
+"    \"clientEmail\": record.partner_id.email,\n"
+"    \"items\": [\n"
+"        {\"name\": line.product_id.name, \"description\": line.name, \"amount\": line.price_subtotal}\n"
+"        for line in record.order_line\n"
+"        if not line.display_type\n"
+"    ],\n"
+"    \"total\": record.amount_total,\n"
+"    \"notes\": html2plaintext(record.note or \"\"),\n"
+"    \"logo\": image(record.company_id.logo),\n"
+"}"
+msgstr ""

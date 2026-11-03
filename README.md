@@ -2,7 +2,8 @@
 
 Print any Odoo document with a template designed on [pdfs.build](https://pdfs.build).
 
-This repository is the home of the `pdfs_build` module, published on the
+This repository is the home of the `pdfs_build` module, published as
+**Invoice & Report Designer by pdfs.build** on the
 [Odoo Apps store](https://apps.odoo.com/apps/modules/19.0/pdfs_build/): one
 branch per Odoo version, the module folder at the root, as the store expects.
 Changes land on `19.0` first and are cherry-picked to the older branches.
