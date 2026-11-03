@@ -129,7 +129,7 @@
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">No templates yet</p>
             <p>
-                Enter your API key under Settings &gt; pdfs.build, then click
+                Enter your API key under pdfs.build &gt; Settings, then click
                 <b>Sync Templates</b> to pull the published templates of your organization.
             </p>
         </field>

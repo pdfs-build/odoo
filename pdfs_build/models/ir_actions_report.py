@@ -1,8 +1,10 @@
 import base64
 import binascii
 import json
+import logging
 import re
 from collections import OrderedDict
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from decimal import Decimal
 from urllib.parse import quote
@@ -21,8 +23,13 @@ from odoo.tools.safe_eval import dateutil as safe_dateutil
 from odoo.tools.safe_eval import safe_eval
 from odoo.tools.safe_eval import time as safe_time
 
-from .pdfs_build_template import LINES_PLACEHOLDER, preview_dialog, schema_html
+from .pdfs_build_template import LINES_PLACEHOLDER, PdfsBuildUnavailable, preview_dialog, schema_html, send
 
+_logger = logging.getLogger(__name__)
+
+# Renders of one print job sent at the same time, and how long one may take.
+RENDER_WORKERS = 4
+RENDER_TIMEOUT = 120
 _EMPTY = {"string": "", "number": 0, "integer": 0, "array": [], "object": {}}
 _ARTICLE_ID = re.compile(r'data-oe-id="(\d+)"')
 # Chatter, activity and access-control plumbing: never what a template needs.
@@ -137,7 +144,7 @@ class IrActionsReport(models.Model):
     pdfs_build_version = fields.Char(
         string="Template Version",
         size=64,
-        help="Empty renders the latest published version. Otherwise a version number "
+        help="Empty renders the latest promoted version. Otherwise a version number "
         "(4), 'draft', or a channel name such as 'staging'.",
     )
     pdfs_build_preview = fields.Text(string="Data Preview", readonly=True, copy=False)
@@ -155,6 +162,18 @@ class IrActionsReport(models.Model):
         help="The schema of the pinned Template Version, fetched from pdfs.build. "
         "Empty when the report renders the latest version: the template's schema applies.",
     )
+    pdfs_build_fallback = fields.Boolean(
+        string="Fall Back to Odoo's Layout",
+        default=True,
+        help="When pdfs.build cannot render (unreachable, a server error, or the plan or "
+        "monthly quota used up), "
+        "print with Odoo's own layout instead of failing. Only for reports that replace "
+        "one of Odoo's own, which have a layout to fall back to.",
+    )
+    pdfs_build_has_qweb = fields.Boolean(
+        compute="_compute_pdfs_build_has_qweb",
+        help="The report has an Odoo layout of its own (a QWeb view named after it).",
+    )
     pdfs_build_schema_html = fields.Html(compute="_compute_pdfs_build_schema_html", string="Template Fields")
     pdfs_build_model_field_ids = fields.Many2many(
         "ir.model.fields",
@@ -162,6 +181,14 @@ class IrActionsReport(models.Model):
         string="Odoo Fields",
         help="The fields of the model, to use as record.<field> in the data expression.",
     )
+
+    @api.depends("report_name")
+    def _compute_pdfs_build_has_qweb(self):
+        View = self.env["ir.ui.view"].sudo()
+        for report in self:
+            report.pdfs_build_has_qweb = bool(
+                report.report_name and View.search_count([("key", "=", report.report_name), ("type", "=", "qweb")], limit=1)
+            )
 
     @api.depends("pdfs_build_schema_json", "pdfs_build_template_id.schema_html")
     def _compute_pdfs_build_schema_html(self):
@@ -358,17 +385,34 @@ class IrActionsReport(models.Model):
             ),
         }
 
+    def _pdfs_build_lang(self, record):
+        """The language ``record`` is printed in: its partner's, as Odoo prints its own
+        documents, else the language of the user printing."""
+        if record._name == "res.partner":
+            partner = record
+        elif "partner_id" in record._fields and record._fields["partner_id"].comodel_name == "res.partner":
+            partner = record.partner_id
+        else:
+            partner = None
+        lang = partner[:1].lang if partner else False
+        if lang and lang in dict(self.env["res.lang"].get_installed()):
+            return lang
+        return self.env.lang or self.env.user.lang
+
     def _pdfs_build_data(self, record, schema=None):
-        """The template data for one record: the expression's dict, fitted to ``schema``
-        (the pinned version's or the template's when not given)."""
+        """The template data for one record: the expression's dict, in the record's
+        language, fitted to ``schema`` (the pinned version's or the template's when
+        not given)."""
         self.ensure_one()
         expression = (self.pdfs_build_data_expr or "").strip()
         if not expression:
             raise UserError(
                 _("The report %s has no data expression. Fill it in under pdfs.build > Reports.", self.name)
             )
+        lang = self._pdfs_build_lang(record)
+        report, record = self.with_context(lang=lang), record.with_context(lang=lang)
         try:
-            data = safe_eval(expression, self._pdfs_build_eval_context(record))
+            data = safe_eval(expression, report._pdfs_build_eval_context(record))
         except UserError:
             raise
         except Exception as error:
@@ -414,15 +458,39 @@ class IrActionsReport(models.Model):
         return detail.get("schema") or {}, detail.get("version") or selector
 
     def _pdfs_build_render(self, record):
+        return self._pdfs_build_render_many(record)[record.id]
+
+    def _pdfs_build_render_many(self, records):
+        """{record id: PDF bytes} for ``records``, rendered through pdfs.build.
+
+        The version is resolved once for the whole job and every record's data is
+        built first, in this thread (the ORM is not thread-safe); only the HTTP
+        requests run in parallel. A failure raises for the first record, in order.
+        """
         self.ensure_one()
+        if not records:
+            return {}
         template = self.pdfs_build_template_id
+        Template = self.env["pdfs_build.template"]
+        settings = Template._api_settings()
+        Template._check_settings(settings)
         schema, version = self._pdfs_build_render_contract()
-        return template._api_request(
-            "POST",
-            "templates/%s/render" % quote(template.external_id, safe=""),
-            json_body={"data": self._pdfs_build_data(record, schema), "version": version},
-            timeout=120,
-        )
+        path = "templates/%s/render" % quote(template.external_id, safe="")
+        bodies = [{"data": self._pdfs_build_data(record, schema), "version": version} for record in records]
+
+        def post(body):
+            return send(settings, "POST", path, json_body=body, timeout=RENDER_TIMEOUT)
+
+        if len(bodies) == 1:
+            responses = [post(bodies[0])]
+        else:
+            with ThreadPoolExecutor(max_workers=min(RENDER_WORKERS, len(bodies))) as pool:
+                responses = list(pool.map(post, bodies))
+        return {record.id: Template._api_result(settings, response) for record, response in zip(records, responses)}
+
+    def _pdfs_build_active(self):
+        """True when this report renders through pdfs.build right now (not falling back)."""
+        return bool(self.pdfs_build_template_id) and not self.env.context.get("pdfs_build_qweb")
 
     # Odoo's PDF pipeline is one inheritance chain on _render_qweb_pdf_prepare_streams:
     # other modules (the quotation document builder, e-invoice XML embedding...)
@@ -437,12 +505,33 @@ class IrActionsReport(models.Model):
 
     def _render_qweb_pdf_prepare_streams(self, report_ref, data, res_ids=None):
         report = self._get_report(report_ref)
-        if not report.pdfs_build_template_id:
+        if not report._pdfs_build_active():
             return super()._render_qweb_pdf_prepare_streams(report_ref, data, res_ids=res_ids)
         res_ids = list(res_ids or [])
         if not res_ids:
             raise UserError(_("Select at least one record to print with %s.", report.name))
-        chain = super(IrActionsReport, self.with_context(pdfs_build_render=True))._render_qweb_pdf_prepare_streams
+        # Render the whole job up front, in parallel, before Odoo's pipeline asks for
+        # one record at a time. Records whose saved PDF Odoo reuses are skipped.
+        records = self.env[report.model].browse(list(dict.fromkeys(res_ids)))
+        if (
+            len(res_ids) == len(records)
+            and report.attachment
+            and report.attachment_use
+            and not self.env.context.get("report_pdf_no_attachment")
+        ):
+            records = records.filtered(lambda record: not report.sudo().retrieve_attachment(record))
+        try:
+            rendered = report._pdfs_build_render_many(records)
+        except PdfsBuildUnavailable as error:
+            if not (report.pdfs_build_fallback and report.pdfs_build_has_qweb):
+                raise
+            _logger.warning("pdfs.build is unavailable, %s is printed with Odoo's layout: %s", report.report_name, error)
+            return super(IrActionsReport, self.with_context(pdfs_build_qweb=True))._render_qweb_pdf_prepare_streams(
+                report_ref, data, res_ids=res_ids
+            )
+        chain = super(
+            IrActionsReport, self.with_context(pdfs_build_render=True, pdfs_build_rendered=rendered)
+        )._render_qweb_pdf_prepare_streams
         if len(res_ids) != len(set(res_ids)):
             # Odoo prints duplicated ids as one combined document, in a single pass.
             return chain(report_ref, data, res_ids=res_ids)
@@ -463,7 +552,7 @@ class IrActionsReport(models.Model):
     @api.model
     def _render_qweb_html(self, report_ref, docids, data=None):
         report = self._get_report(report_ref)
-        if not report.pdfs_build_template_id:
+        if not report._pdfs_build_active():
             return super()._render_qweb_html(report_ref, docids, data=data)
         # There is no QWeb view behind a pdfs.build report. The articles carry the
         # markers Odoo's pipeline uses to split and save the PDF per record, and
@@ -487,7 +576,7 @@ class IrActionsReport(models.Model):
         set_viewport_size=False,
     ):
         report = self._get_report(report_ref) if report_ref else self.env["ir.actions.report"]
-        if not report.pdfs_build_template_id:
+        if not report._pdfs_build_active():
             return super()._run_wkhtmltopdf(
                 bodies,
                 report_ref=report_ref,
@@ -502,9 +591,9 @@ class IrActionsReport(models.Model):
         res_ids = [int(match) for body in bodies for match in _ARTICLE_ID.findall(str(body))]
         if not res_ids:
             raise UserError(_("Select at least one record to print with %s.", report.name))
-        rendered = {}
-        for record in self.env[report.model].browse(list(dict.fromkeys(res_ids))):
-            rendered[record.id] = report._pdfs_build_render(record)
+        rendered = dict(self.env.context.get("pdfs_build_rendered") or {})
+        missing = [res_id for res_id in dict.fromkeys(res_ids) if res_id not in rendered]
+        rendered.update(report._pdfs_build_render_many(self.env[report.model].browse(missing)))
         pdfs = [rendered[res_id] for res_id in res_ids]
         return pdfs[0] if len(pdfs) == 1 else merge_pdf(pdfs)
 
