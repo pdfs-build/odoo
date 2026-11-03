@@ -1,28 +1,32 @@
 {
-    "name": "pdfs.build PDF Templates",
-    "summary": "Print any Odoo document with a template designed on pdfs.build",
+    "name": "Invoice & Report Designer by pdfs.build",
+    "summary": "Custom invoice, quotation, purchase order and delivery slip layouts, designed visually. No QWeb.",
     "description": """
-Print quotations, invoices, delivery slips, certificates or any other Odoo
+Print invoices, quotations, purchase orders, delivery slips or any other Odoo
 record with a template designed on pdfs.build, instead of a QWeb layout.
 
-1. Enter your pdfs.build API key and organization ID in Settings.
-2. Sync the published templates into Odoo.
-3. For each template, create a report: pick the Odoo model and write the
-   Python expression that turns a record into the template's data. Or click
-   Designs for Odoo: the gallery's Odoo designs are named after Odoo's
-   fields, and one click adds the design, syncs it and creates its report.
-4. The report appears in the record's Print menu, in email templates and
-   everywhere else Odoo prints PDFs. Printing several records merges the PDFs.
+1. Enter your pdfs.build API key and organization ID under pdfs.build > Settings.
+2. Click Designs for Odoo and add a ready-made design: it is copied into your
+   organization and its report is created, with no mapping to write. Or sync
+   your own templates and create a report for each: pick the Odoo model, and
+   the data expression is written from the template's fields.
+3. The report appears in the record's Print menu, in email templates and
+   everywhere else Odoo prints PDFs, or replaces one of Odoo's own reports.
+   Printing several records merges the PDFs.
 
-This module sends the data produced by your expression, together with your
-API key, to the pdfs.build API (api.pdfs.build) every time a report is printed.
-Rendering over the API needs a pdfs.build Starter plan or higher.
+Each record prints in its partner's language. A report that replaces one of
+Odoo's own falls back to Odoo's layout when pdfs.build cannot render.
+
+This module sends the data produced by the report, together with your API key,
+to the pdfs.build API (api.pdfs.build) every time a report is printed. New
+pdfs.build accounts start with a 7-day free trial that includes the API; plans
+start at $19 a month after it.
 """,
     "author": "pdfs.build",
     "website": "https://pdfs.build",
     "support": "hello@pdfs.build",
     "category": "Productivity",
-    "version": "18.0.1.2.0",
+    "version": "18.0.1.3.0",
     "license": "LGPL-3",
     "depends": ["base", "web"],
     "external_dependencies": {"python": ["requests"]},

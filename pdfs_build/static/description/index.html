@@ -1,84 +1,105 @@
 <section class="oe_container">
     <div class="oe_row oe_spaced">
-        <h2 class="oe_slogan">pdfs.build PDF Templates</h2>
-        <h3 class="oe_slogan">Print any Odoo document with a template designed on pdfs.build.</h3>
+        <h2 class="oe_slogan">Invoices and quotes your customers notice</h2>
+        <h3 class="oe_slogan">
+            Custom invoice, quotation, purchase order and delivery slip layouts for Odoo,
+            designed visually on pdfs.build. No QWeb, no XML.
+        </h3>
+        <p class="oe_mt16 text-center">
+            <a class="btn btn-primary btn-lg" href="https://app.pdfs.build/signup?plan=pro&amp;interval=monthly" target="_blank">Start the 7-day free trial</a>
+        </p>
+        <p class="text-center text-muted">API included in the trial. Plans from $19 a month after it.</p>
         <div class="oe_span6">
-            <img src="screenshot_print.png" class="oe_picture oe_screenshot" alt="The report in a Sales Order's Print menu"/>
+            <img src="design_invoice.png" class="oe_picture oe_screenshot" alt="An Odoo invoice printed with the Stub Band design"/>
         </div>
         <div class="oe_span6">
-            <img src="screenshot_pdf.png" class="oe_picture oe_screenshot" alt="The quotation rendered by pdfs.build"/>
+            <img src="screenshot_print.png" class="oe_picture oe_screenshot" alt="The same invoice's Print menu in Odoo"/>
+            <p class="oe_mt16">
+                Your design replaces Odoo's own <b>Invoice PDF</b>: the Print button, <b>Send</b> by email,
+                the customer portal and the PDF stored on the invoice all use it. Odoo's e-invoice XML
+                (Factur-X, UBL) is still embedded.
+            </p>
         </div>
     </div>
 </section>
 
 <section class="oe_container oe_dark">
     <div class="oe_row">
-        <h2 class="oe_slogan">Design once, print everywhere</h2>
+        <h2 class="oe_slogan">Ready-made designs, one click, no mapping</h2>
+        <div class="oe_span12">
+            <img src="designs_for_odoo.png" class="oe_picture" alt="Invoice, quotation, purchase order and delivery slip designs for Odoo"/>
+        </div>
         <div class="oe_span6">
             <p class="oe_mt32">
-                pdfs.build is a PDF template engine with an AI-assisted designer. Describe the
-                document you want, refine it with live preview, and it comes with a JSON schema
-                of the data it needs. This module connects those templates to Odoo.
-            </p>
-            <p>
-                A report maps an Odoo model to a template with a short Python expression,
-                then appears in the record's <b>Print</b> menu, in email templates and
-                wherever Odoo prints PDFs. Printing several records merges them.
+                <b>Designs for Odoo</b> lists invoice, quotation, purchase order and delivery slip
+                designs with previews. Click one: it is copied into your pdfs.build organization and its
+                report is created, already reading the right Odoo fields. It takes your company logo
+                and document-layout colors from Odoo's settings.
             </p>
         </div>
         <div class="oe_span6">
-            <img src="screenshot_template_form.png" class="oe_picture oe_screenshot" alt="A synced template with its data fields"/>
+            <p class="oe_mt32">
+                Two designs for each document type, from bold to conservative, and more on
+                <a href="https://pdfs.build/templates/?category=odoo" target="_blank">pdfs.build/templates</a>.
+                Want something else? Describe the document to the pdfs.build AI designer, or edit any
+                design visually with live preview, then print it from Odoo.
+            </p>
         </div>
     </div>
 </section>
 
 <section class="oe_container">
     <div class="oe_row">
-        <h2 class="oe_slogan">Three steps</h2>
+        <h2 class="oe_slogan">Up and running in three steps</h2>
         <div class="oe_span4">
             <h4>1. Connect</h4>
-            <p>Paste your pdfs.build API key and organization ID in Settings and sync the published templates. Archive the ones Odoo does not need.</p>
+            <p>
+                <a href="https://app.pdfs.build/signup?plan=pro&amp;interval=monthly" target="_blank">Start the free trial</a>,
+                create an API key, and paste it with your organization ID in <b>pdfs.build &gt; Settings</b>.
+            </p>
         </div>
         <div class="oe_span4">
-            <h4>2. Map</h4>
-            <p>Click <b>Designs for Odoo</b> and add an invoice, quotation, purchase order or delivery slip design: it is copied into your organization, synced, and its report is created with the data expression already written. Or create a report for any template of yours and finish the pre-generated expression. Preview the data and the PDF, then take over Odoo's own report.</p>
+            <h4>2. Pick a design</h4>
+            <p>Add one from <b>Designs for Odoo</b>, or sync your own templates. Preview the PDF on a real record before going live.</p>
         </div>
         <div class="oe_span4">
             <h4>3. Print</h4>
-            <p>The report is in the model's Print menu. PDFs are rendered by pdfs.build in a few seconds and can be saved as attachments.</p>
-        </div>
-    </div>
-    <div class="oe_row">
-        <div class="oe_span12">
-            <img src="screenshot_report.png" class="oe_picture oe_screenshot" alt="The report form with its data expression and data preview"/>
+            <p>Use it for Odoo's Invoices or Quotation / Order report, or add it as a new entry in the Print menu.</p>
         </div>
     </div>
 </section>
 
 <section class="oe_container oe_dark">
-    <div class="oe_row">
-        <h2 class="oe_slogan">Both sides of the mapping, in the form</h2>
-        <div class="oe_span6">
-            <img src="screenshot_template_fields.png" class="oe_picture oe_screenshot" alt="Template Fields tab: what the template expects"/>
-            <p class="oe_mt16">What the template expects: every field with its type, whether it is required, and its description.</p>
-        </div>
-        <div class="oe_span6">
-            <img src="screenshot_odoo_fields.png" class="oe_picture oe_screenshot" alt="Odoo Fields tab: the model's fields with labels"/>
-            <p class="oe_mt16">The Odoo model's fields with their labels, types and related models, so nobody has to guess a technical field name.</p>
-        </div>
-    </div>
-</section>
-
-<section class="oe_container">
     <div class="oe_row">
         <h2 class="oe_slogan">Preview in Odoo, take over Odoo's own reports</h2>
         <div class="oe_span6">
             <img src="screenshot_preview.png" class="oe_picture oe_screenshot" alt="The rendered PDF previewed inside Odoo"/>
-            <p class="oe_mt16"><b>Preview PDF</b> renders the record you pick and shows the result in Odoo's own PDF viewer, with download and print in its toolbar.</p>
+            <p class="oe_mt16"><b>Preview PDF</b> renders the record you pick and shows it in Odoo's PDF viewer.</p>
         </div>
         <div class="oe_span6">
             <img src="screenshot_takeover.png" class="oe_picture oe_screenshot" alt="Picking one of Odoo's own reports to render with the template"/>
-            <p class="oe_mt16"><b>Use for Existing Report</b> hands Invoices, Quotation / Order or any other Odoo PDF report to a template. Emails, portal downloads and stored invoice PDFs follow.</p>
+            <p class="oe_mt16"><b>Use for Existing Report</b> hands Invoices, Quotation / Order or any other Odoo PDF report to a design. Clear it to go back.</p>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row">
+        <h2 class="oe_slogan">Your own templates, mapped in the form</h2>
+        <div class="oe_span12">
+            <p>
+                For a template of your own, the report's data is written for you from the template's fields:
+                everything that matches an Odoo field, lines and nested records included, is filled in.
+                The rest is a short Python expression, with both sides listed next to it.
+            </p>
+        </div>
+        <div class="oe_span6">
+            <img src="screenshot_template_fields.png" class="oe_picture oe_screenshot" alt="Template Fields tab: what the template expects"/>
+            <p class="oe_mt16">What the template expects: every field with its type and description.</p>
+        </div>
+        <div class="oe_span6">
+            <img src="screenshot_odoo_fields.png" class="oe_picture oe_screenshot" alt="Odoo Fields tab: the model's fields with labels"/>
+            <p class="oe_mt16">The Odoo model's fields with their labels, so nobody guesses a technical name.</p>
         </div>
     </div>
 </section>
@@ -87,23 +108,25 @@
     <div class="oe_row">
         <h2 class="oe_slogan">Features</h2>
         <div class="oe_span6">
+            <h4>For your business</h4>
             <ul>
-                <li>Templates synced from your pdfs.build organization, with their JSON schema and sample data; archive the ones Odoo does not need</li>
-                <li>Data expression written from the schema: every field that matches one of the model's (nested records and lines included) is read automatically, dates, amounts, taxes and images formatted; only fields Odoo does not have are left to fill in</li>
-                <li><b>Designs for Odoo</b>: ready-made invoice, quotation, purchase order and delivery slip designs, added from inside Odoo in one click with their report created, no mapping at all; they take the company logo and document-layout colours from Odoo's settings</li>
-                <li>Preview Data and an in-app PDF preview on every report</li>
-                <li>Replace Odoo's own Invoices or Quotation / Order PDF with a template: email attachments, portal downloads and stored invoice PDFs follow, and Odoo's e-invoice XML embedding still applies</li>
-                <li>Reports in the Print menu, in email templates, and merged when printing several records</li>
-                <li>Save as attachment and reload from attachment, like any Odoo report</li>
-                <li>Pin a template version or channel per report</li>
+                <li>Invoices, quotations, purchase orders, delivery slips, or any other Odoo document</li>
+                <li>Each document in its customer's language: translated fields, dates and amounts</li>
+                <li>Email attachments, portal downloads and stored invoice PDFs use your design</li>
+                <li>Odoo's e-invoice XML embedding (Factur-X, UBL) still applies</li>
+                <li>Keeps invoices going out: a replaced Odoo report falls back to Odoo's layout if pdfs.build cannot render</li>
+                <li>Print many records at once: rendered in parallel and merged into one PDF</li>
             </ul>
         </div>
         <div class="oe_span6">
+            <h4>For administrators</h4>
             <ul>
-                <li>Helpers for images, dates and amounts; empty fields fitted to the schema automatically</li>
-                <li>Validation and compilation errors from pdfs.build shown to the user with the field or line concerned</li>
-                <li>Odoo 18, Community and Enterprise, no extra Python packages</li>
-                <li>Free and open source (LGPL-3)</li>
+                <li>Preview the data and the PDF on any record before going live</li>
+                <li>The data mapping is written for you from the template's fields; helpers for images, dates, amounts and taxes</li>
+                <li>Errors from pdfs.build shown with the field or line concerned</li>
+                <li>Pin a template version per report, so design changes never break printing</li>
+                <li>Save as attachment and reload from attachment, like any Odoo report</li>
+                <li>Odoo 18, Community and Enterprise; free and open source (LGPL-3)</li>
             </ul>
         </div>
     </div>
@@ -114,10 +137,15 @@
         <h2 class="oe_slogan">What you need</h2>
         <div class="oe_span12">
             <p>
-                This module uses the external service pdfs.build. You need a pdfs.build account on the
-                Starter plan or higher (the Free plan has no API access) and at least one published template.
-                Every print sends the data produced by the report's expression, together with your API key,
-                to api.pdfs.build. Nothing else leaves your Odoo. Render logs on pdfs.build keep the data
+                This module uses the external service pdfs.build. You need a pdfs.build account with API
+                access and at least one published template, or a design added from <b>Designs for Odoo</b>.
+                New accounts start with a
+                <a href="https://app.pdfs.build/signup?plan=pro&amp;interval=monthly" target="_blank">7-day free trial</a>
+                that includes the API; plans start at $19 a month after it.
+            </p>
+            <p>
+                Every print sends the data produced by the report, together with your API key, to
+                api.pdfs.build. Nothing else leaves your Odoo. Render logs on pdfs.build keep the data
                 payload for your audit trail.
             </p>
             <p>Questions: <a href="mailto:hello@pdfs.build">hello@pdfs.build</a></p>
